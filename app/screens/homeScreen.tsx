@@ -28,7 +28,7 @@ export default function Home_Screen(){
                         <HomeButton 
                             text='Next' 
                             onPress={ () =>{
-                                router.push('/screens/signUpScreen'); 
+                                router.push('/screens/camera'); 
                             } } />
                     </View>
                 </View>
