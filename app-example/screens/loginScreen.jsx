@@ -31,9 +31,10 @@ export default function LoginScreen(){
 
             <View style={{alignItems:'center',margin:5}}>
                 <LoginButton
-                    onPress={function (): void {
-                    throw new Error('Function not implemented.')
-                    } }
+                    onPress={()=>{
+                        console.log("ok");
+                        
+                    }}
                     text={'Login'}
                     buttonColor={'#0E64D2'}
                     logo={undefined}

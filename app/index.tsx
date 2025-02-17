@@ -1,16 +1,15 @@
-import React from 'react'
-import SignUpScreen from './screens/signUpScreen'
-import Home_Screen from './screens/homeScreen'
-import { StatusBar } from 'expo-status-bar';
-import ProfileCam from './screens/camera';
+import { Text, View } from "react-native";
 
-
-const indexScreen = ()=>{
-    return (
-        <><ProfileCam />
-        <StatusBar style="light" hidden />
-        </>
-    );
+export default function Index() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Text>Edit app/index.tsx to edit this screen.</Text>
+    </View>
+  );
 }
-
-export default indexScreen
