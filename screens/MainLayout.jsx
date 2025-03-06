@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-} from "react-native";
+import { View, StyleSheet, Keyboard } from "react-native";
 import BottomNavBar from "../components/BottomNavBar";
 
 const MainLayout = ({ children }) => {
@@ -32,12 +26,7 @@ const MainLayout = ({ children }) => {
         <View style={[styles.backgroundLayer, styles.topBackground]} />
         <View style={[styles.backgroundLayer, styles.bottomBackground]} />
       </View>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1, zIndex: 2 }}
-      >
-        <View style={styles.contentContainer}>{children}</View>
-      </KeyboardAvoidingView>
+      <View style={styles.contentContainer}>{children}</View>
       {!isKeyboardShown && <BottomNavBar />}
     </View>
   );
