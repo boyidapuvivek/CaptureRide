@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-node_modules
-=======
 node_modules/
+firebaseConfig.jsx
 .expo/
 dist/
 npm-debug.*
@@ -21,4 +19,3 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
->>>>>>> 1dcec3f529e60d93c913251cb99ffc2e0f9d078e
