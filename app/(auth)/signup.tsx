@@ -3,8 +3,11 @@ import TextInputField from "../components/TextInputField";
 import Colors from "../constants/Colors";
 import { useAuth } from "../contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native";
 import { useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import { signupUser } from "../api/auth";
+import axios from "axios";
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -14,17 +17,32 @@ const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = () => {
+  const handleSignup = async (username, email, password) => {
     if (!username || !email || !password)
       return Alert.alert("All fields are required");
-    login({ username, email });
-    router.replace("/(main)/home");
+
+    try {
+      const res = await axios.post(
+        "http://192.168.1.3:5000/api/v1/user/register",
+        {
+          username,
+          email,
+          password,
+        }
+      );
+
+      const data = res.data;
+
+      router.push("/(auth)/login");
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", error?.message);
+    }
   };
 
   const handleLogin = () => {
     router.push("/(auth)/login");
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.maincontainer}>
@@ -55,11 +73,11 @@ const SignUpScreen = () => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <Pressable
-          onPress={handleSignup}
+        <TouchableOpacity
+          onPress={() => handleSignup(username, email, password)}
           style={styles.button}>
           <Text style={styles.buttontext}>Sign Up</Text>
-        </Pressable>
+        </TouchableOpacity>
         <Text style={styles.login}>
           Do you have an account?{" "}
           <Text

@@ -1,10 +1,18 @@
 import Google from "../assets/images/google.svg";
 import TextInputField from "../components/TextInputField";
 import Colors from "../constants/Colors";
-import { useAuth } from "../contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View, Alert } from "react-native";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  Pressable,
+} from "react-native";
 import { useState } from "react";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -13,10 +21,34 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (!email || !password) return Alert.alert("All fields are required");
-    login({ email }); // Add password check in real app
-    router.replace("/(main)/home");
+  const handleLogin = async (email, password) => {
+    if (!email || !password)
+      return Alert.alert(
+        "All fields are required",
+        "Please enter all the fields"
+      );
+
+    try {
+      const res = await axios.post(
+        "http://192.168.1.3:5000/api/v1/user/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      const { accessToken, refreshToken, userData } = res?.data?.data;
+
+      await login(accessToken, refreshToken, userData);
+
+      router.replace("/(main)/home");
+    } catch (err) {
+      if (err.response?.data?.error) {
+        Alert.alert("Login failed", err.response.data.error);
+      } else {
+        Alert.alert("Network error", err.message || "Something went wrong");
+      }
+    }
   };
 
   const handleSignup = () => {
@@ -24,7 +56,7 @@ const LoginScreen = () => {
   };
 
   const handleForgetPassword = () => {
-    router.push("/(auth)/forgot-password");
+    router.push("/(auth)/forgetpassword");
   };
 
   return (
@@ -39,10 +71,11 @@ const LoginScreen = () => {
         <Text style={styles.divide}>Or</Text>
 
         <TextInputField
-          placeholder='Email'
+          placeholder='Phone number or Email'
           value={email}
           onChangeText={setEmail}
         />
+
         <TextInputField
           placeholder='Password'
           secureTextEntry
@@ -58,11 +91,11 @@ const LoginScreen = () => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <Pressable
-          onPress={handleLogin}
+        <TouchableOpacity
+          onPress={() => handleLogin(email, password)}
           style={styles.button}>
           <Text style={styles.buttontext}>Login</Text>
-        </Pressable>
+        </TouchableOpacity>
         <Text style={styles.login}>
           Don't have an account?{" "}
           <Text

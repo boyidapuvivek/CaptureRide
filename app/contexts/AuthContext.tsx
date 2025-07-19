@@ -1,47 +1,71 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import * as SecureStore from "expo-secure-store";
+// src/contexts/AuthContext.tsx
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  getAccessToken,
+  storeTokens,
+  storeUserData,
+  getUserData,
+  clearTokens,
+} from "../utils/authUtils";
 
-type User = { email: string };
-type AuthContextType = {
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
-};
-
-const AuthContext = createContext<AuthContextType>({
+const AuthContext = createContext({
   user: null,
   login: () => {},
   logout: () => {},
+  loading: true,
 });
 
-export const useAuth = () => useContext(AuthContext);
-
-const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    SecureStore.getItemAsync("user").then((data) => {
-      if (data) setUser(JSON.parse(data));
-    });
+    const bootstrapAuth = async () => {
+      try {
+        const token = await getAccessToken();
+        const userData = await getUserData();
+
+        if (token && userData) {
+          setUser({ ...userData, token });
+        }
+      } catch (error) {
+        console.error("Error during auth bootstrap:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    bootstrapAuth();
   }, []);
 
-  const login = async (userData: User) => {
-    setUser(userData);
-    await SecureStore.setItemAsync("user", JSON.stringify(userData));
+  const login = async (accessToken, refreshToken, userInfo) => {
+    try {
+      // Store tokens and user data separately
+      await storeTokens(accessToken, refreshToken);
+      await storeUserData(userInfo);
+
+      // Update state
+      setUser({ ...userInfo, token: accessToken });
+    } catch (error) {
+      console.error("Error during login:", error);
+      throw error;
+    }
   };
 
   const logout = async () => {
-    setUser(null);
-    await SecureStore.deleteItemAsync("user");
+    try {
+      await clearTokens();
+      setUser(null);
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthProvider;
+export const useAuth = () => useContext(AuthContext);
