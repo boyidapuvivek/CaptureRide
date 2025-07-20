@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     paddingHorizontal: 12,
-    paddingVertical: 18,
+    paddingVertical: 12,
 
     backgroundColor: Colors.white,
     borderRadius: 18,
@@ -48,12 +48,11 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
-    backgroundColor: Colors.transparent,
-
-    // borderRadius: 18,
+    flex: 1,
     fontFamily: "poppins-regular",
+    fontSize: 16,
     color: Colors.black,
-    height: "auto",
+    height: 40,
   },
 });
 

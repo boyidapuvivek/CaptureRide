@@ -9,10 +9,15 @@ import {
   View,
   Alert,
   Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
+import CustomButton from "../components/CustomButton";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -60,70 +65,73 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.maincontainer}>
-        <Text style={styles.text}>Login</Text>
-        <View style={styles.signup}>
-          <Google />
-          <Text style={styles.signuptext}>Google</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View style={styles.maincontainer}>
+          <Text style={styles.text}>Login</Text>
+          <View style={styles.signup}>
+            <Google />
+            <Text style={styles.signuptext}>Google</Text>
+          </View>
+
+          <Text style={styles.divide}>Or</Text>
+
+          <TextInputField
+            placeholder='Phone number or Email'
+            value={email}
+            onChangeText={setEmail}
+          />
+
+          <TextInputField
+            placeholder='Password'
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <Pressable
+            onPress={handleForgetPassword}
+            style={{ alignSelf: "flex-end" }}>
+            <Text style={styles.forgettext}>Forget Password?</Text>
+          </Pressable>
         </View>
 
-        <Text style={styles.divide}>Or</Text>
-
-        <TextInputField
-          placeholder='Phone number or Email'
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <TextInputField
-          placeholder='Password'
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <Pressable
-          onPress={handleForgetPassword}
-          style={{ alignSelf: "flex-end" }}>
-          <Text style={styles.forgettext}>Forget Password?</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.bottomContainer}>
-        <TouchableOpacity
-          onPress={() => handleLogin(email, password)}
-          style={styles.button}>
-          <Text style={styles.buttontext}>Login</Text>
-        </TouchableOpacity>
-        <Text style={styles.login}>
-          Don't have an account?{" "}
-          <Text
-            onPress={handleSignup}
-            style={styles.logintext}>
-            Sign up
+        <KeyboardAvoidingView
+          style={styles.bottomContainer}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={20}>
+          <CustomButton
+            title={"Login"}
+            onPress={() => {
+              handleLogin(email, password);
+            }}
+          />
+          <Text style={styles.login}>
+            Don't have an account?{" "}
+            <Text
+              onPress={handleSignup}
+              style={styles.logintext}>
+              Sign up
+            </Text>
           </Text>
-        </Text>
+        </KeyboardAvoidingView>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     backgroundColor: Colors.white,
     paddingHorizontal: 22,
   },
   maincontainer: {
-    width: "100%",
-    justifyContent: "center",
     alignItems: "center",
-    textAlign: "center",
-    paddingTop: 50,
-    gap: 20,
+    paddingTop: "26%",
+    paddingBottom: "4%",
+    gap: 26,
   },
   text: {
     fontFamily: "poppins-bold",
@@ -149,20 +157,18 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
   },
   bottomContainer: {
-    width: "100%",
     alignItems: "center",
-    justifyContent: "center",
     gap: 20,
-    paddingBottom: 20,
+    paddingBottom: "20%",
   },
-  button: {
-    height: 50,
-    width: "100%",
-    backgroundColor: Colors.primary,
-    borderRadius: 12,
-    paddingVertical: 10,
-    justifyContent: "center",
-  },
+  // button: {
+  //   height: 50,
+  //   width: "100%",
+  //   backgroundColor: Colors.primary,
+  //   borderRadius: 12,
+  //   paddingVertical: 10,
+  //   justifyContent: "center",
+  // },
   buttontext: {
     fontFamily: "poppins-medium",
     fontSize: 16,

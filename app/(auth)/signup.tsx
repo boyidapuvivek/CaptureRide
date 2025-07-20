@@ -19,7 +19,7 @@ const SignUpScreen = () => {
 
   const handleSignup = async (username, email, password) => {
     if (!username || !email || !password)
-      return Alert.alert("All fields are required");
+      return Alert.alert("All fields are required", "Please enter all fields");
 
     try {
       const res = await axios.post(
