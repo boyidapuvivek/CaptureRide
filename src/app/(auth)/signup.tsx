@@ -1,12 +1,12 @@
-import Google from "../assets/images/google.svg";
-import TextInputField from "../components/TextInputField";
-import Colors from "../constants/Colors";
-import { useAuth } from "../contexts/AuthContext";
+import Google from "../../assets/images/google.svg";
+import TextInputField from "../../components/TextInputField";
+import Colors from "../../constants/Colors";
+import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native";
 import { useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { signupUser } from "../api/auth";
+import { signupUser } from "../../api/auth";
 import axios from "axios";
 
 const SignUpScreen = () => {

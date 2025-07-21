@@ -10,9 +10,9 @@ import {
 } from "react-native";
 const { width, height } = Dimensions.get("window");
 import { StatusBar } from "react-native";
-import Colors from "../constants/Colors";
-import { useAuth } from "../contexts/AuthContext";
-import CardContainer from "../components/CardContainer";
+import Colors from "../../constants/Colors";
+import { useAuth } from "../../contexts/AuthContext";
+import CardContainer from "../../components/CardContainer";
 import { useRouter } from "expo-router";
 
 const HomeScreen = () => {
@@ -35,7 +35,7 @@ const HomeScreen = () => {
               router.push("/(screens)/profile");
             }}>
             <Image
-              source={require("../assets/images/profile.png")}
+              source={require("../../assets/images/profile.png")}
               style={styles.profileimg}
             />
           </TouchableOpacity>
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: "relative",
+    backgroundColor: Colors.white,
   },
 
   blueSection: {

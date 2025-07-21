@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import Colors from "../constants/Colors";
-import CustomButton from "../components/CustomButton";
-import BackArrow from "../assets/icons/arrow_back.svg";
+import Colors from "../../constants/Colors";
+import CustomButton from "../../components/CustomButton";
+import BackArrow from "../../assets/icons/arrow_back.svg";
 import { useRouter } from "expo-router";
-import TextInputField from "../components/TextInputField";
+import TextInputField from "../../components/TextInputField";
 
 const ForgetPassowrd = () => {
   const router = useRouter();

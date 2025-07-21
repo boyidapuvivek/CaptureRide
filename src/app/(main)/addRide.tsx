@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import Header from "../components/Header";
-import TextInputField from "../components/TextInputField";
-import RoomNumber from "../assets/icons/roomNum.svg";
-import Phone from "../assets/icons/phone.svg";
-import CustomDropdown from "../components/CustomDropDown";
-import Colors from "../constants/Colors";
+import Header from "../../components/Header";
+import TextInputField from "../../components/TextInputField";
+import RoomNumber from "../../assets/icons/roomNum.svg";
+import Phone from "../../assets/icons/phone.svg";
+import CustomDropdown from "../../components/CustomDropDown";
+import Colors from "../../constants/Colors";
+import CustomButton from "../../components/CustomButton";
+import UploadPhoto from "../../components/UploadPhoto";
 
 const options = [
   { label: "AP16AB1234", id: 1 },
@@ -68,6 +70,14 @@ const AddRide = () => {
             data={options}
             onSelect={setVehicle}
           />
+
+          <UploadPhoto title='Upload Aadhaar' />
+
+          <UploadPhoto title='Upload DL' />
+
+          <UploadPhoto title='Upload Photo' />
+
+          <CustomButton title={"Upload"} />
         </View>
       </ScrollView>
     </View>
@@ -76,12 +86,15 @@ const AddRide = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 22,
     paddingTop: 30,
+    backgroundColor: Colors.white,
   },
   mainContainer: {
     gap: 20,
     paddingTop: 20,
+    paddingBottom: 20,
   },
 });
 

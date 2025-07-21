@@ -1,15 +1,15 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
-import Colors from "../constants/Colors";
-import Home from "../assets/icons/home.svg";
-import HomeSelect from "../assets/icons/home_selected.svg";
-import Ride from "../assets/icons/bike.svg";
-import RideSelect from "../assets/icons/bike_selected.svg";
-import Doc from "../assets/icons/doc.svg";
-import DocSelect from "../assets/icons/docs_selected.svg";
-import Qr from "../assets/icons/qr.svg";
-import QrSelect from "../assets/icons/qr_selected.svg";
+import Colors from "../../constants/Colors";
+import Home from "../../assets/icons/home.svg";
+import HomeSelect from "../../assets/icons/home_selected.svg";
+import Ride from "../../assets/icons/bike.svg";
+import RideSelect from "../../assets/icons/bike_selected.svg";
+import Doc from "../../assets/icons/doc.svg";
+import DocSelect from "../../assets/icons/docs_selected.svg";
+import Qr from "../../assets/icons/qr.svg";
+import QrSelect from "../../assets/icons/qr_selected.svg";
 
 const TabIcon = ({ focused, IconComponent, IconSelectedComponent }) => {
   const Icon = focused ? IconSelectedComponent : IconComponent;
@@ -21,7 +21,7 @@ const TabIcon = ({ focused, IconComponent, IconSelectedComponent }) => {
   );
 };
 
-export default function MainLayout() {
+export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{

@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import BackArrow from "../assets/icons/arrow_back.svg";
-import TextInputField from "../components/TextInputField";
-import CustomButton from "../components/CustomButton";
-import Colors from "../constants/Colors";
+import BackArrow from "../../assets/icons/arrow_back.svg";
+import TextInputField from "../../components/TextInputField";
+import CustomButton from "../../components/CustomButton";
+import Colors from "../../constants/Colors";
 import { useRouter } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
 

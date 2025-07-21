@@ -1,6 +1,6 @@
-import Google from "../assets/images/google.svg";
-import TextInputField from "../components/TextInputField";
-import Colors from "../constants/Colors";
+import Google from "../../assets/images/google.svg";
+import TextInputField from "../../components/TextInputField";
+import Colors from "../../constants/Colors";
 import { useRouter } from "expo-router";
 import {
   TouchableOpacity,
@@ -16,8 +16,8 @@ import {
 } from "react-native";
 import { useState } from "react";
 import axios from "axios";
-import { useAuth } from "../contexts/AuthContext";
-import CustomButton from "../components/CustomButton";
+import { useAuth } from "../../contexts/AuthContext";
+import CustomButton from "../../components/CustomButton";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -161,14 +161,6 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingBottom: "20%",
   },
-  // button: {
-  //   height: 50,
-  //   width: "100%",
-  //   backgroundColor: Colors.primary,
-  //   borderRadius: 12,
-  //   paddingVertical: 10,
-  //   justifyContent: "center",
-  // },
   buttontext: {
     fontFamily: "poppins-medium",
     fontSize: 16,
