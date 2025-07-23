@@ -10,7 +10,9 @@ const Colors = {
   
   primaryText: "#2A4ECA",
   grayText:"#7C8BA0",
-  darkText : "#111827"
+  darkText : "#111827",
+
+  grayStatus:"#D3D3D3"
 }
 
 export default Colors;

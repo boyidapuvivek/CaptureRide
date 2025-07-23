@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import Header from "../../components/Header";
 import TextInputField from "../../components/TextInputField";
 import RoomNumber from "../../assets/icons/roomNum.svg";
 import Phone from "../../assets/icons/phone.svg";
+import User from "../../assets/icons/user.svg";
 import CustomDropdown from "../../components/CustomDropDown";
 import Colors from "../../constants/Colors";
 import CustomButton from "../../components/CustomButton";
 import UploadPhoto from "../../components/UploadPhoto";
+import axios from "axios";
+import Loader from "../../components/Loader";
 
 const options = [
   { label: "AP16AB1234", id: 1 },
@@ -35,7 +38,85 @@ const options = [
 const AddRide = () => {
   const [roomNumber, setRoomNumber] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [vehicle, setVehicle] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [vehicleNumber, setVehicle] = useState("");
+  const [aadharPhoto, setAadharPhoto] = useState("");
+  const [dlPhoto, setDLPhoto] = useState("");
+  const [customerPhoto, setCustomerPhoto] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const formatData = () => {
+    setRoomNumber("");
+    setPhoneNumber("");
+    setCustomerName("");
+    setVehicle("");
+    setAadharPhoto("");
+    setDLPhoto("");
+    setCustomerPhoto("");
+    Alert.alert("Success", "Ride added successfully");
+  };
+
+  const handlePress = async () => {
+    if (
+      !roomNumber ||
+      !customerName ||
+      !phoneNumber ||
+      !vehicleNumber ||
+      !aadharPhoto ||
+      !dlPhoto ||
+      !customerPhoto
+    ) {
+      Alert.alert("All Fields Required", "Please fill all the fields");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+
+      formData.append("roomNumber", roomNumber);
+      formData.append("customerName", customerName);
+      formData.append("phoneNumber", phoneNumber);
+      formData.append("vehicleNumber", vehicleNumber);
+      formData.append("aadharPhoto", {
+        uri: aadharPhoto,
+        type: "image/jpeg",
+        name: "aadhar.jpg",
+      });
+      formData.append("dlPhoto", {
+        uri: dlPhoto,
+        type: "image/jpeg",
+        name: "dl.jpg",
+      });
+      formData.append("customerPhoto", {
+        uri: customerPhoto,
+        type: "image/jpeg",
+        name: "customer.jpg",
+      });
+
+      const res = await axios.post(
+        "http://192.168.1.7:5000/api/v1/ride/addRide",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        formatData();
+      } else {
+        Alert.alert("Upload Failed", "Please try again.");
+      }
+    } catch (error) {
+      Alert.alert("Error", error?.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) return <Loader />;
 
   return (
     <View style={styles.container}>
@@ -56,6 +137,16 @@ const AddRide = () => {
           </TextInputField>
 
           <TextInputField
+            placeholder='Enter Customer Name'
+            value={customerName}
+            onChangeText={setCustomerName}>
+            <User
+              height={20}
+              width={20}
+            />
+          </TextInputField>
+
+          <TextInputField
             placeholder='Enter Phone Number'
             value={phoneNumber}
             onChangeText={setPhoneNumber}>
@@ -68,16 +159,26 @@ const AddRide = () => {
           <CustomDropdown
             placeholder='Select Vehicle'
             data={options}
-            onSelect={setVehicle}
+            onSelect={(item) => setVehicle(item.label)}
           />
 
-          <UploadPhoto title='Upload Aadhaar' />
+          <UploadPhoto
+            title='Upload Aadhaar'
+            captureImage={setAadharPhoto}
+          />
+          <UploadPhoto
+            title='Upload DL'
+            captureImage={setDLPhoto}
+          />
+          <UploadPhoto
+            title='Upload Photo'
+            captureImage={setCustomerPhoto}
+          />
 
-          <UploadPhoto title='Upload DL' />
-
-          <UploadPhoto title='Upload Photo' />
-
-          <CustomButton title={"Upload"} />
+          <CustomButton
+            title='Upload'
+            onPress={handlePress}
+          />
         </View>
       </ScrollView>
     </View>

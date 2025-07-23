@@ -5,7 +5,10 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "app/api/apiClient.js"
+    "app/api/apiClient.js",
+    "src/utils/authUtils.js",
+    "src/utils/errorHandler.js",
+    "src/api/apiRoutes.js"
   ],
   "extends": "expo/tsconfig.base"
 }

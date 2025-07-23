@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../constants/Colors";
 
 type Props = {
@@ -9,11 +9,12 @@ type Props = {
 
 const CustomButton = ({ title, onPress }: Props) => {
   return (
-    <Pressable
+    <TouchableOpacity
       style={styles.button}
+      activeOpacity={0.8}
       onPress={onPress}>
       <Text style={styles.text}>{title}</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

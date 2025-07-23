@@ -2,10 +2,11 @@
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, StatusBar } from "react-native";
 import { AuthProvider } from "../contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
+import Colors from "../constants/Colors";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete
 SplashScreen.preventAutoHideAsync();
@@ -25,7 +26,7 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null; // Keep splash screen visible
+    return null;
   }
 
   return (
@@ -33,6 +34,7 @@ export default function RootLayout() {
       <SafeAreaView
         style={{ flex: 1 }}
         edges={["top", "left", "right"]}>
+        <StatusBar />
         <Stack screenOptions={{ headerShown: false }} />
       </SafeAreaView>
     </AuthProvider>

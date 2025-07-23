@@ -21,10 +21,10 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar
+      {/* <StatusBar
         translucent
         hidden
-      />
+      /> */}
 
       <View style={styles.blueSection} />
 
@@ -41,7 +41,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
           <View style={{ gap: 5 }}>
             <Text style={styles.greeting}>Good Morning!</Text>
-            <Text style={styles.userName}>{user.user.username}</Text>
+            <Text style={styles.userName}>{user?.user?.username}</Text>
           </View>
         </View>
         <CardContainer />

@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
   } as ViewStyle,
 
   dropdownText: {
-    backgroundColor: Colors.transparent,
     fontFamily: "poppins-regular",
     color: Colors.black,
     height: "auto",

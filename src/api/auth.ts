@@ -1,5 +1,5 @@
 import apiClient from "./apiClient";
-import endpoints  from "./endPoints";
+import endpoints  from "./apiRoutes";
 
 export const loginUser = (email: string, password: string) =>
   apiClient.post(endpoints.LOGIN, { email, password });

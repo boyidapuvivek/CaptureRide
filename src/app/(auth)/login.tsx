@@ -18,6 +18,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import CustomButton from "../../components/CustomButton";
+import { post } from "../../api/apiClient";
+import { apiRoute } from "../../api/apiRoutes";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -35,12 +37,14 @@ const LoginScreen = () => {
 
     try {
       const res = await axios.post(
-        "http://192.168.1.3:5000/api/v1/user/login",
+        "http://192.168.1.7:5000/api/v1/user/login",
         {
           email,
           password,
         }
       );
+
+      // const res = await post(apiRoute.LOGIN, { email, password });
 
       const { accessToken, refreshToken, userData } = res?.data?.data;
 

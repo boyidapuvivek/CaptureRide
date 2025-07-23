@@ -52,10 +52,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = async (message) => {
     try {
       await clearTokens();
       setUser(null);
+      console.log(message);
     } catch (error) {
       console.error("Error during logout:", error);
     }

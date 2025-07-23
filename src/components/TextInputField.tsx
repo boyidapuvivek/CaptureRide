@@ -21,6 +21,7 @@ const TextInputField = ({
       {children}
       <TextInput
         placeholder={placeholder}
+        placeholderTextColor={Colors.grayText}
         secureTextEntry={secureTextEntry}
         value={value}
         onChangeText={onChangeText}
