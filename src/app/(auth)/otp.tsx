@@ -6,6 +6,7 @@ import CustomButton from "../../components/CustomButton";
 import Colors from "../../constants/Colors";
 import { useRouter } from "expo-router";
 import { OtpInput } from "react-native-otp-entry";
+import { Values } from "../../constants/Values";
 
 const Otp = () => {
   const router = useRouter();
@@ -75,8 +76,8 @@ const Otp = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 30,
+    paddingHorizontal: Values.paddingHorizontal,
+    paddingTop: Values.paddingTop,
   },
   mainContainer: {
     flex: 1,

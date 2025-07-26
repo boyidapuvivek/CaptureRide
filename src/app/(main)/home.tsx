@@ -14,6 +14,7 @@ import Colors from "../../constants/Colors";
 import { useAuth } from "../../contexts/AuthContext";
 import CardContainer from "../../components/CardContainer";
 import { useRouter } from "expo-router";
+import { Values } from "../../constants/Values";
 
 const HomeScreen = () => {
   const user = useAuth();
@@ -21,10 +22,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* <StatusBar
-        translucent
-        hidden
-      /> */}
+      {/* <StatusBar translucent /> */}
 
       <View style={styles.blueSection} />
 
@@ -54,7 +52,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: "relative",
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.background,
   },
 
   blueSection: {
@@ -70,8 +68,8 @@ const styles = StyleSheet.create({
 
   mainContainer: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 50,
+    paddingHorizontal: Values.paddingHorizontal,
+    paddingTop: 60,
     gap: 60,
   },
 

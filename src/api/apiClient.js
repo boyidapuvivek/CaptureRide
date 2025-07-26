@@ -50,9 +50,9 @@ apiClient.interceptors.response.use(
 );
 
 // GET request
-export const get = async (url, config = {}) => {
+export const get = async (url, {}, config = {}) => {
   try {
-    const response = await apiClient.get(url, config);
+    const response = await apiClient.get(url, {}, config);
     return {
       success: true,
       data: response.data,

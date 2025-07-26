@@ -13,13 +13,16 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  BackHandler,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import CustomButton from "../../components/CustomButton";
 import { post } from "../../api/apiClient";
 import { apiRoute } from "../../api/apiRoutes";
+import { Values } from "../../constants/Values";
+import Loader from "../../components/Loader";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -27,6 +30,20 @@ const LoginScreen = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const backAction = () => {
+      return true; // Returning true disables back navigation
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const handleLogin = async (email, password) => {
     if (!email || !password)
@@ -34,10 +51,10 @@ const LoginScreen = () => {
         "All fields are required",
         "Please enter all the fields"
       );
-
+    setLoading(true);
     try {
       const res = await axios.post(
-        "http://192.168.1.7:5000/api/v1/user/login",
+        "http://192.168.1.100:5000/api/v1/user/login",
         {
           email,
           password,
@@ -49,7 +66,7 @@ const LoginScreen = () => {
       const { accessToken, refreshToken, userData } = res?.data?.data;
 
       await login(accessToken, refreshToken, userData);
-
+      setLoading(false);
       router.replace("/(main)/home");
     } catch (err) {
       if (err.response?.data?.error) {
@@ -68,59 +85,63 @@ const LoginScreen = () => {
     router.push("/(auth)/forgetpassword");
   };
 
-  return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View style={styles.maincontainer}>
-          <Text style={styles.text}>Login</Text>
-          <View style={styles.signup}>
-            <Google />
-            <Text style={styles.signuptext}>Google</Text>
+  return loading ? (
+    <Loader />
+  ) : (
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View style={styles.maincontainer}>
+            <Text style={styles.text}>Login</Text>
+            <View style={styles.signup}>
+              <Google />
+              <Text style={styles.signuptext}>Google</Text>
+            </View>
+
+            <Text style={styles.divide}>Or</Text>
+
+            <TextInputField
+              placeholder='Phone number or Email'
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <TextInputField
+              placeholder='Password'
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <Pressable
+              onPress={handleForgetPassword}
+              style={{ alignSelf: "flex-end" }}>
+              <Text style={styles.forgettext}>Forget Password?</Text>
+            </Pressable>
           </View>
 
-          <Text style={styles.divide}>Or</Text>
-
-          <TextInputField
-            placeholder='Phone number or Email'
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <TextInputField
-            placeholder='Password'
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <Pressable
-            onPress={handleForgetPassword}
-            style={{ alignSelf: "flex-end" }}>
-            <Text style={styles.forgettext}>Forget Password?</Text>
-          </Pressable>
-        </View>
-
-        <KeyboardAvoidingView
-          style={styles.bottomContainer}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={20}>
-          <CustomButton
-            title={"Login"}
-            onPress={() => {
-              handleLogin(email, password);
-            }}
-          />
-          <Text style={styles.login}>
-            Don't have an account?{" "}
-            <Text
-              onPress={handleSignup}
-              style={styles.logintext}>
-              Sign up
+          <KeyboardAvoidingView
+            style={styles.bottomContainer}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={20}>
+            <CustomButton
+              title={"Login"}
+              onPress={() => {
+                handleLogin(email, password);
+              }}
+            />
+            <Text style={styles.login}>
+              Don't have an account?{" "}
+              <Text
+                onPress={handleSignup}
+                style={styles.logintext}>
+                Sign up
+              </Text>
             </Text>
-          </Text>
-        </KeyboardAvoidingView>
-      </View>
-    </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </View>
+      </TouchableWithoutFeedback>
+    </>
   );
 };
 
@@ -129,7 +150,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     backgroundColor: Colors.white,
-    paddingHorizontal: 22,
+    paddingHorizontal: Values.paddingHorizontal,
   },
   maincontainer: {
     alignItems: "center",

@@ -3,12 +3,13 @@ import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
+import Colors from "../constants/Colors";
 
 export default function App() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
+  const refrestApp = useEffect(() => {
     if (loading) return;
 
     if (user) {
@@ -20,7 +21,12 @@ export default function App() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
         <ActivityIndicator size='large' />
       </View>
     );

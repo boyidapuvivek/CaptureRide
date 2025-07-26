@@ -4,7 +4,6 @@ import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { View, ActivityIndicator, StatusBar } from "react-native";
 import { AuthProvider } from "../contexts/AuthContext";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
 import Colors from "../constants/Colors";
 
@@ -31,12 +30,11 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <SafeAreaView
-        style={{ flex: 1 }}
-        edges={["top", "left", "right"]}>
-        <StatusBar />
-        <Stack screenOptions={{ headerShown: false }} />
-      </SafeAreaView>
+      <StatusBar
+        hidden
+        translucent
+      />
+      <Stack screenOptions={{ headerShown: false }} />
     </AuthProvider>
   );
 }

@@ -6,6 +6,7 @@ const Colors = {
   transparent: "#F5F9FE",
   white: "#FFFFFF",
   black: "#000000",
+  background: "#FFFFFF",
   
   
   primaryText: "#2A4ECA",

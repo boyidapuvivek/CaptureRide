@@ -8,6 +8,7 @@ import { useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { signupUser } from "../../api/auth";
 import axios from "axios";
+import { Values } from "../../constants/Values";
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const SignUpScreen = () => {
 
     try {
       const res = await axios.post(
-        "http://192.168.1.3:5000/api/v1/user/register",
+        "http://192.168.1.100:5000/api/v1/user/register",
         {
           username,
           email,
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     backgroundColor: Colors.white,
-    paddingHorizontal: 22,
+    paddingHorizontal: Values.paddingHorizontal,
   },
   maincontainer: {
     width: "100%",

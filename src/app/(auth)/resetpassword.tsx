@@ -5,6 +5,7 @@ import CustomButton from "../../components/CustomButton";
 import BackArrow from "../../assets/icons/arrow_back.svg";
 import { useRouter } from "expo-router";
 import TextInputField from "../../components/TextInputField";
+import { Values } from "../../constants/Values";
 
 const ForgetPassowrd = () => {
   const router = useRouter();
@@ -50,8 +51,8 @@ const ForgetPassowrd = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 30,
+    paddingHorizontal: Values.paddingHorizontal,
+    paddingTop: Values.paddingTop,
   },
   mainContainer: {
     flex: 1,

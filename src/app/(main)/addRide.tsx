@@ -11,6 +11,8 @@ import CustomButton from "../../components/CustomButton";
 import UploadPhoto from "../../components/UploadPhoto";
 import axios from "axios";
 import Loader from "../../components/Loader";
+import { Values } from "../../constants/Values";
+import { getAccessToken } from "../../utils/authUtils";
 
 const options = [
   { label: "AP16AB1234", id: 1 },
@@ -44,6 +46,7 @@ const AddRide = () => {
   const [dlPhoto, setDLPhoto] = useState("");
   const [customerPhoto, setCustomerPhoto] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const accessToken = getAccessToken();
 
   const formatData = () => {
     setRoomNumber("");
@@ -69,6 +72,7 @@ const AddRide = () => {
       Alert.alert("All Fields Required", "Please fill all the fields");
       return;
     }
+    console.log("Access:", accessToken);
 
     try {
       setIsLoading(true);
@@ -95,16 +99,17 @@ const AddRide = () => {
       });
 
       const res = await axios.post(
-        "http://192.168.1.7:5000/api/v1/ride/addRide",
+        "http://192.168.1.100:5000/api/v1/ride/addRide",
         formData,
         {
           headers: {
+            Authorization: `Bearer ${accessToken._j}`,
             "Content-Type": "multipart/form-data",
           },
         }
       );
 
-      if (res.status === 200) {
+      if (res.status === 202) {
         formatData();
       } else {
         Alert.alert("Upload Failed", "Please try again.");
@@ -188,9 +193,9 @@ const AddRide = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 22,
-    paddingTop: 30,
-    backgroundColor: Colors.white,
+    paddingHorizontal: Values.paddingHorizontal,
+    paddingTop: Values.paddingTop,
+    backgroundColor: Colors.background,
   },
   mainContainer: {
     gap: 20,
