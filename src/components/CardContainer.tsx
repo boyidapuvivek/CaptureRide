@@ -35,9 +35,9 @@ const CardsData = [
     route: "/(main)/allRides",
   },
   {
-    title: "My\nQr",
+    title: "My\nQr's",
     Icon: QrIcon,
-    color: "#7F36F7",
+    color: "#7192BE",
     route: "/(main)/qr",
   },
 ];
@@ -54,7 +54,8 @@ const CardContainer = () => {
             key={index}
             onPress={() => {
               router.push(item.route);
-            }}>
+            }}
+            activeOpacity={0.98}>
             <Text
               style={styles.cardText}
               numberOfLines={2}

@@ -30,7 +30,6 @@ const Profile = () => {
       if (res.status !== 200) {
         throw new Error("Failes user logout!!");
       }
-      console.log("😊", res);
     } catch (error) {
       throw new Error("Failed user logout!!");
     } finally {

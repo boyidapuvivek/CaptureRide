@@ -20,9 +20,9 @@ import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import CustomButton from "../../components/CustomButton";
 import { post } from "../../api/apiClient";
-import { apiRoute } from "../../api/apiRoutes";
 import { Values } from "../../constants/Values";
 import Loader from "../../components/Loader";
+import { apiRoute } from "../../api/apiConfig";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -53,13 +53,10 @@ const LoginScreen = () => {
       );
     setLoading(true);
     try {
-      const res = await axios.post(
-        "http://192.168.1.100:5000/api/v1/user/login",
-        {
-          email,
-          password,
-        }
-      );
+      const res = await axios.post(apiRoute.LOGIN, {
+        email,
+        password,
+      });
 
       // const res = await post(apiRoute.LOGIN, { email, password });
 
@@ -71,8 +68,10 @@ const LoginScreen = () => {
     } catch (err) {
       if (err.response?.data?.error) {
         Alert.alert("Login failed", err.response.data.error);
+        setLoading(false);
       } else {
-        Alert.alert("Network error", err.message || "Something went wrong");
+        Alert.alert("Network error", err || "Something went wrong");
+        setLoading(false);
       }
     }
   };

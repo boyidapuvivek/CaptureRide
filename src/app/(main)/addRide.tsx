@@ -13,6 +13,7 @@ import axios from "axios";
 import Loader from "../../components/Loader";
 import { Values } from "../../constants/Values";
 import { getAccessToken } from "../../utils/authUtils";
+import { apiRoute } from "../../api/apiConfig";
 
 const options = [
   { label: "AP16AB1234", id: 1 },
@@ -72,7 +73,6 @@ const AddRide = () => {
       Alert.alert("All Fields Required", "Please fill all the fields");
       return;
     }
-    console.log("Access:", accessToken);
 
     try {
       setIsLoading(true);
@@ -98,16 +98,12 @@ const AddRide = () => {
         name: "customer.jpg",
       });
 
-      const res = await axios.post(
-        "http://192.168.1.100:5000/api/v1/ride/addRide",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken._j}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await axios.post(apiRoute.ADDRIDE, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken._j}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (res.status === 202) {
         formatData();

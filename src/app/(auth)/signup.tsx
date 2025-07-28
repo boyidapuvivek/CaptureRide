@@ -9,6 +9,7 @@ import * as SecureStore from "expo-secure-store";
 import { signupUser } from "../../api/auth";
 import axios from "axios";
 import { Values } from "../../constants/Values";
+import { apiRoute } from "../../api/apiConfig";
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -23,14 +24,11 @@ const SignUpScreen = () => {
       return Alert.alert("All fields are required", "Please enter all fields");
 
     try {
-      const res = await axios.post(
-        "http://192.168.1.100:5000/api/v1/user/register",
-        {
-          username,
-          email,
-          password,
-        }
-      );
+      const res = await axios.post(apiRoute.REGISTER, {
+        username,
+        email,
+        password,
+      });
 
       const data = res.data;
 

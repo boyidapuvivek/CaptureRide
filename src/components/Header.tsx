@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
 import BackArrow from "../assets/icons/back.svg";
 import Profile from "../assets/icons/profile.svg";
 import { useRouter } from "expo-router";
@@ -14,7 +14,7 @@ const Header = ({ title }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.left}>
-        <Pressable
+        <TouchableOpacity
           onPress={() => {
             router.back();
           }}>
@@ -22,11 +22,11 @@ const Header = ({ title }: Props) => {
             height={24}
             width={24}
           />
-        </Pressable>
+        </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
       </View>
 
-      <Pressable
+      <TouchableOpacity
         onPress={() => {
           router.push("/(screens)/profile");
         }}>
@@ -34,7 +34,7 @@ const Header = ({ title }: Props) => {
           height={24}
           width={24}
         />
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 };
