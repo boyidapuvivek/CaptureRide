@@ -13,7 +13,9 @@ const Colors = {
   grayText:"#7C8BA0",
   darkText : "#111827",
 
-  grayStatus:"#D3D3D3"
+  grayStatus:"#D3D3D3",
+
+  red:"#FF2C2C"
 }
 
 export default Colors;

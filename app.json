@@ -22,7 +22,11 @@
         "foregroundImage": "./src/assets/images/captureride-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.CaptureRide"
+      "package": "com.anonymous.CaptureRide",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -44,6 +48,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e9954f59-259c-44de-8d51-fe3d0ef9a012"
+      }
     }
   }
 }

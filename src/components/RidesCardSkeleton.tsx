@@ -1,10 +1,10 @@
-import React from "react";
-import { StyleSheet, View, Pressable } from "react-native";
-import Colors from "../constants/Colors";
-import Edit from "../assets/icons/allRides/edit.svg";
-import Share from "../assets/icons/allRides/share.svg";
-import Call from "../assets/icons/allRides/call.svg";
-import SkeletonBox from "../utils/SkeletonBox"; // Import the separate component
+import React from "react"
+import { StyleSheet, View, Pressable } from "react-native"
+import Colors from "../constants/Colors"
+import Edit from "../assets/icons/allRides/edit.svg"
+import Share from "../assets/icons/allRides/share.svg"
+import Call from "../assets/icons/allRides/call.svg"
+import SkeletonBox from "../utils/SkeletonBox" // Import the separate component
 
 const RidesCardSkeleton = () => {
   return (
@@ -84,8 +84,8 @@ const RidesCardSkeleton = () => {
         </View>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -130,6 +130,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 10,
   },
-});
+})
 
-export default RidesCardSkeleton;
+export default RidesCardSkeleton

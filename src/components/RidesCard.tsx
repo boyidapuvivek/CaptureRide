@@ -1,27 +1,27 @@
-import React from "react";
-import { Image, StyleSheet, Text, Pressable, View } from "react-native";
-import Colors from "../constants/Colors";
-import Number from "../assets/icons/roomNum.svg";
-import Phone from "../assets/icons/phone.svg";
-import Edit from "../assets/icons/allRides/edit.svg";
-import Share from "../assets/icons/allRides/share.svg";
-import Call from "../assets/icons/allRides/call.svg";
-import SkeletonBox from "../utils/SkeletonBox";
+import React from "react"
+import { Image, StyleSheet, Text, Pressable, View } from "react-native"
+import Colors from "../constants/Colors"
+import Number from "../assets/icons/roomNum.svg"
+import Phone from "../assets/icons/phone.svg"
+import Edit from "../assets/icons/allRides/edit.svg"
+import Share from "../assets/icons/allRides/share.svg"
+import Call from "../assets/icons/allRides/call.svg"
+import SkeletonBox from "../utils/SkeletonBox"
 
 type Ride = {
-  _id: string;
-  roomNumber: string;
-  customerName: string;
-  phoneNumber: string;
-  vehicleNumber: string;
-  aadharPhoto: string;
-  dlPhoto: string;
-  customerPhoto: string;
-};
+  _id: string
+  roomNumber: string
+  customerName: string
+  phoneNumber: string
+  vehicleNumber: string
+  aadharPhoto: string
+  dlPhoto: string
+  customerPhoto: string
+}
 
 type Props = {
-  data: Ride[];
-};
+  data: Ride[]
+}
 
 const RidesCard = ({ data }: Props) => {
   return (
@@ -88,8 +88,8 @@ const RidesCard = ({ data }: Props) => {
         </Pressable>
       ))}
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -101,10 +101,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: Colors.white,
     borderRadius: 18,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
-    borderRightColor: "#00000026",
-    borderBottomColor: "#00000026",
+    borderWidth: 1,
+    borderColor: Colors.grayStatus,
     marginBottom: 12,
   },
   mainContainer: {
@@ -147,6 +145,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 10,
   },
-});
+})
 
-export default RidesCard;
+export default RidesCard

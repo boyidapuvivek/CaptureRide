@@ -5,26 +5,40 @@ import Colors from "../constants/Colors";
 type Props = {
   title: String;
   onPress: () => {};
+  color?: String;
+  fontColor?: String;
+  width?: String;
 };
 
-const CustomButton = ({ title, onPress }: Props) => {
+const CustomButton = ({
+  title,
+  onPress,
+  color,
+  fontColor,
+  width,
+  padding,
+}: Props) => {
+  const dynamicStyles = {
+    backgroundColor: color || Colors.primary,
+    width: width || "100%",
+  };
+
   return (
     <TouchableOpacity
-      style={styles.button}
+      style={[styles.button, dynamicStyles]}
       activeOpacity={0.8}
       onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
+      <Text style={[styles.text, { color: fontColor || Colors.white }]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    height: 50,
-    width: "100%",
-    backgroundColor: Colors.primary,
     borderRadius: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
     justifyContent: "center",
   },
   text: {
