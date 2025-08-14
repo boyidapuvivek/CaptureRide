@@ -1,7 +1,7 @@
 import React from "react"
 import { StyleSheet, View, Pressable } from "react-native"
 import Colors from "../constants/Colors"
-import Edit from "../assets/icons/allRides/edit.svg"
+import Delete from "../assets/icons/allRides/delete.svg"
 import Share from "../assets/icons/allRides/share.svg"
 import Call from "../assets/icons/allRides/call.svg"
 import SkeletonBox from "../utils/SkeletonBox" // Import the separate component
@@ -61,7 +61,7 @@ const RidesCardSkeleton = () => {
         {/* Action buttons - keeping them visible but you could skeleton these too */}
         <View style={styles.actionButtons}>
           <Pressable disabled>
-            <Edit
+            <Delete
               height={24}
               width={24}
               style={{ opacity: 0.6 }}

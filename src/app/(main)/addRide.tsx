@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import { Alert, ScrollView, StyleSheet, View } from "react-native";
-import Header from "../../components/Header";
-import TextInputField from "../../components/TextInputField";
-import RoomNumber from "../../assets/icons/roomNum.svg";
-import Phone from "../../assets/icons/phone.svg";
-import User from "../../assets/icons/user.svg";
-import CustomDropdown from "../../components/CustomDropDown";
-import Colors from "../../constants/Colors";
-import CustomButton from "../../components/CustomButton";
-import UploadPhoto from "../../components/UploadPhoto";
-import axios from "axios";
-import Loader from "../../components/Loader";
-import { Values } from "../../constants/Values";
-import { getAccessToken } from "../../utils/authUtils";
-import { apiRoute } from "../../api/apiConfig";
+import React, { useState } from "react"
+import { Alert, ScrollView, StyleSheet, View } from "react-native"
+import Header from "../../components/Header"
+import TextInputField from "../../components/TextInputField"
+import RoomNumber from "../../assets/icons/roomNum.svg"
+import Phone from "../../assets/icons/phone.svg"
+import User from "../../assets/icons/user.svg"
+import CustomDropdown from "../../components/CustomDropDown"
+import Colors from "../../constants/Colors"
+import CustomButton from "../../components/CustomButton"
+import UploadPhoto from "../../components/UploadPhoto"
+import axios from "axios"
+import Loader from "../../components/Loader"
+import { Values } from "../../constants/Values"
+import { getAccessToken } from "../../utils/authUtils"
+import { apiRoute } from "../../api/apiConfig"
 
 const options = [
   { label: "AP16AB1234", id: 1 },
@@ -36,29 +36,29 @@ const options = [
   { label: "UK08WX2109", id: 18 },
   { label: "AS04YZ6789", id: 19 },
   { label: "JH10AB3456", id: 20 },
-];
+]
 
 const AddRide = () => {
-  const [roomNumber, setRoomNumber] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [vehicleNumber, setVehicle] = useState("");
-  const [aadharPhoto, setAadharPhoto] = useState("");
-  const [dlPhoto, setDLPhoto] = useState("");
-  const [customerPhoto, setCustomerPhoto] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const accessToken = getAccessToken();
+  const [roomNumber, setRoomNumber] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [customerName, setCustomerName] = useState("")
+  const [vehicleNumber, setVehicle] = useState("")
+  const [aadharPhoto, setAadharPhoto] = useState("")
+  const [dlPhoto, setDLPhoto] = useState("")
+  const [customerPhoto, setCustomerPhoto] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const accessToken = getAccessToken()
 
   const formatData = () => {
-    setRoomNumber("");
-    setPhoneNumber("");
-    setCustomerName("");
-    setVehicle("");
-    setAadharPhoto("");
-    setDLPhoto("");
-    setCustomerPhoto("");
-    Alert.alert("Success", "Ride added successfully");
-  };
+    setRoomNumber("")
+    setPhoneNumber("")
+    setCustomerName("")
+    setVehicle("")
+    setAadharPhoto("")
+    setDLPhoto("")
+    setCustomerPhoto("")
+    Alert.alert("Success", "Ride added successfully")
+  }
 
   const handlePress = async () => {
     if (
@@ -70,54 +70,54 @@ const AddRide = () => {
       !dlPhoto ||
       !customerPhoto
     ) {
-      Alert.alert("All Fields Required", "Please fill all the fields");
-      return;
+      Alert.alert("All Fields Required", "Please fill all the fields")
+      return
     }
 
     try {
-      setIsLoading(true);
-      const formData = new FormData();
+      setIsLoading(true)
+      const formData = new FormData()
 
-      formData.append("roomNumber", roomNumber);
-      formData.append("customerName", customerName);
-      formData.append("phoneNumber", phoneNumber);
-      formData.append("vehicleNumber", vehicleNumber);
+      formData.append("roomNumber", roomNumber)
+      formData.append("customerName", customerName)
+      formData.append("phoneNumber", phoneNumber)
+      formData.append("vehicleNumber", vehicleNumber)
       formData.append("aadharPhoto", {
         uri: aadharPhoto,
         type: "image/jpeg",
         name: "aadhar.jpg",
-      });
+      })
       formData.append("dlPhoto", {
         uri: dlPhoto,
         type: "image/jpeg",
         name: "dl.jpg",
-      });
+      })
       formData.append("customerPhoto", {
         uri: customerPhoto,
         type: "image/jpeg",
         name: "customer.jpg",
-      });
+      })
 
       const res = await axios.post(apiRoute.ADDRIDE, formData, {
         headers: {
           Authorization: `Bearer ${accessToken._j}`,
           "Content-Type": "multipart/form-data",
         },
-      });
+      })
 
       if (res.status === 202) {
-        formatData();
+        formatData()
       } else {
-        Alert.alert("Upload Failed", "Please try again.");
+        Alert.alert("Upload Failed", "Please try again.")
       }
     } catch (error) {
-      Alert.alert("Error", error?.message || "Something went wrong.");
+      Alert.alert("Error", error?.message || "Something went wrong.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader />
 
   return (
     <View style={styles.container}>
@@ -128,17 +128,7 @@ const AddRide = () => {
         nestedScrollEnabled={true}>
         <View style={styles.mainContainer}>
           <TextInputField
-            placeholder='Enter Room Number'
-            value={roomNumber}
-            onChangeText={setRoomNumber}>
-            <RoomNumber
-              height={25}
-              width={25}
-            />
-          </TextInputField>
-
-          <TextInputField
-            placeholder='Enter Customer Name'
+            placeholder='Customer Name'
             value={customerName}
             onChangeText={setCustomerName}>
             <User
@@ -148,10 +138,20 @@ const AddRide = () => {
           </TextInputField>
 
           <TextInputField
-            placeholder='Enter Phone Number'
+            placeholder='Mobile Number'
             value={phoneNumber}
             onChangeText={setPhoneNumber}>
             <Phone
+              height={25}
+              width={25}
+            />
+          </TextInputField>
+
+          <TextInputField
+            placeholder='Hotel Name and Room Number'
+            value={roomNumber}
+            onChangeText={setRoomNumber}>
+            <RoomNumber
               height={25}
               width={25}
             />
@@ -164,16 +164,16 @@ const AddRide = () => {
           />
 
           <UploadPhoto
+            title='Upload Photo'
+            captureImage={setCustomerPhoto}
+          />
+          <UploadPhoto
             title='Upload Aadhaar'
             captureImage={setAadharPhoto}
           />
           <UploadPhoto
             title='Upload DL'
             captureImage={setDLPhoto}
-          />
-          <UploadPhoto
-            title='Upload Photo'
-            captureImage={setCustomerPhoto}
           />
 
           <CustomButton
@@ -183,8 +183,8 @@ const AddRide = () => {
         </View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -198,6 +198,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
-});
+})
 
-export default AddRide;
+export default AddRide

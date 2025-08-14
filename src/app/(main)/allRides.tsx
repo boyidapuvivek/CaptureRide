@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import Colors from "../../constants/Colors"
 import Header from "../../components/Header"
 import { Values } from "../../constants/Values"
@@ -67,9 +68,8 @@ const AllRides = () => {
         timeout: 5000,
       })
 
-      const data = res.data?.data
-
-      const rides = Array.isArray(data?.rides) ? data.rides : []
+      const responseData = res.data?.data
+      const rides = Array.isArray(responseData?.rides) ? responseData.rides : []
 
       if (isRefresh) {
         setData(rides)
@@ -81,7 +81,7 @@ const AllRides = () => {
         setPage(2)
       }
 
-      setHasMore(data?.pagination?.hasNext || false)
+      setHasMore(responseData?.pagination?.hasNext || false)
     } catch (error) {
       console.error("Error fetching rides:", error)
     } finally {
@@ -92,11 +92,16 @@ const AllRides = () => {
     }
   }
 
-  useEffect(() => {
-    if (token && data.length === 0) {
-      fetchData(1)
-    }
-  }, [token])
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (token) {
+        // Reset pagination and refresh data
+        setPage(1)
+        fetchData(1, true)
+      }
+    }, [token])
+  )
 
   const loadMore = useCallback(() => {
     if (!loading && !loadingMore && hasMore && data.length > 0) {
@@ -111,6 +116,11 @@ const AllRides = () => {
       fetchData(1, true)
     }
   }, [refreshing, loading])
+
+  // Function to handle successful deletion from RidesCard
+  const handleDeleteSuccess = useCallback((deletedId: string) => {
+    setData((prevData) => prevData.filter((ride) => ride._id !== deletedId))
+  }, [])
 
   // Render skeleton loader for initial loading
   if (initialLoading || (!token && data.length === 0)) {
@@ -139,15 +149,19 @@ const AllRides = () => {
     </View>
   )
 
-  // Render main content - Always use FlatList to enable pull-to-refresh
   return (
     <View style={styles.container}>
       <Header title={"All Rides"} />
 
       <FlatList
         data={data}
-        keyExtractor={(item, index) => `${item.id || index}-${index}`}
-        renderItem={({ item }) => <RidesCard data={[item]} />}
+        keyExtractor={(item, index) => `${item._id || index}-${index}`}
+        renderItem={({ item }) => (
+          <RidesCard
+            data={[item]}
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        )}
         onEndReached={loadMore}
         onEndReachedThreshold={0.3}
         showsVerticalScrollIndicator={false}

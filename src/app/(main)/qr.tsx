@@ -22,13 +22,13 @@ import axios from "axios"
 import { apiRoute } from "../../api/apiConfig"
 import { getAccessToken } from "../../utils/authUtils"
 import SkeletonBox from "../../utils/SkeletonBox"
+import useFetchToken from "../../utils/useFetchToken"
 
 const { width: screenWidth } = Dimensions.get("window")
 const IMAGE_WIDTH = screenWidth - Values.paddingHorizontal * 2
 const IMAGE_HEIGHT = 300
 
 const Qr = () => {
-  const [token, setToken] = useState("")
   const [selectedImage, setSelectedImage] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [qrImages, setQrImages] = useState([])
@@ -39,20 +39,7 @@ const Qr = () => {
 
   const scrollViewRef = useRef(null)
 
-  // Fetch token on component mount
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const accessToken = await getAccessToken()
-        setToken(accessToken)
-      } catch (error) {
-        console.error("Error fetching access token:", error)
-        Alert.alert("Error", "Failed to authenticate. Please try again.")
-      }
-    }
-
-    fetchToken()
-  }, [])
+  const token = useFetchToken()
 
   // Request permissions on component mount
   useEffect(() => {

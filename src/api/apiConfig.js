@@ -10,6 +10,7 @@ export const apiRoute = {
 
   ADDRIDE: `${API_CONFIG.BASE_URL}/ride/addRide`,
   GETRIDES: `${API_CONFIG.BASE_URL}/ride/getRides`,
+  DELETERIDE: `${API_CONFIG.BASE_URL}/ride/deleteRide`,
 
   ADDQR: `${API_CONFIG.BASE_URL}/qr/addQR`,
   GETQR: `${API_CONFIG.BASE_URL}/qr/getQR`,

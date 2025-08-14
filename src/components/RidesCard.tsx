@@ -1,12 +1,25 @@
 import React from "react"
-import { Image, StyleSheet, Text, Pressable, View } from "react-native"
+import {
+  Image,
+  StyleSheet,
+  Text,
+  Pressable,
+  View,
+  Alert,
+  Linking,
+  Share,
+} from "react-native"
 import Colors from "../constants/Colors"
 import Number from "../assets/icons/roomNum.svg"
 import Phone from "../assets/icons/phone.svg"
-import Edit from "../assets/icons/allRides/edit.svg"
-import Share from "../assets/icons/allRides/share.svg"
+import Delete from "../assets/icons/allRides/delete.svg"
+import ShareImg from "../assets/icons/allRides/share.svg"
 import Call from "../assets/icons/allRides/call.svg"
 import SkeletonBox from "../utils/SkeletonBox"
+import { useRouter } from "expo-router"
+import axios from "axios"
+import { apiRoute } from "../api/apiConfig"
+import useFetchToken from "../utils/useFetchToken"
 
 type Ride = {
   _id: string
@@ -21,13 +34,110 @@ type Ride = {
 
 type Props = {
   data: Ride[]
+  onDeleteSuccess?: (deletedId: string) => void
 }
 
-const RidesCard = ({ data }: Props) => {
+const RidesCard = ({ data, onDeleteSuccess }: Props) => {
+  const router = useRouter()
+  const token = useFetchToken()
+
+  const handlePress = (ride) => {
+    router.push({
+      pathname: "/(screens)/rideDetails/[id]",
+      params: {
+        id: ride._id,
+        data: JSON.stringify(ride),
+      },
+    })
+  }
+
+  const handleDelete = async (rideId: string) => {
+    Alert.alert("Delete Ride", "Are you sure you want to delete this ride?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const res = await axios.delete(apiRoute.DELETERIDE, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              params: {
+                id: rideId,
+              },
+            })
+
+            if (res?.status === 200) {
+              Alert.alert("Success", "Ride deleted successfully")
+              // Call the callback to update the parent component's state
+              if (onDeleteSuccess) {
+                onDeleteSuccess(rideId)
+              }
+            }
+          } catch (error) {
+            console.error("Delete error:", error)
+            Alert.alert("Error", "Failed to delete ride. Please try again.")
+          }
+        },
+      },
+    ])
+  }
+
+  const handleCall = async (phoneNumber: string) => {
+    try {
+      // Clean the phone number by removing all non-digit characters
+      const cleanedNumber = phoneNumber.replace(/\D/g, "")
+      const phoneUrl = `tel:${cleanedNumber}`
+
+      await Linking.openURL(phoneUrl)
+    } catch (error) {
+      console.error("Error making call:", error)
+      Alert.alert("Error", "Failed to make call. Please try again.")
+    }
+  }
+
+  const handleShare = async (ride: Ride) => {
+    try {
+      const shareContent = {
+        title: "Ride Details",
+        message: `🚗 Ride Information:\n\n👤 Customer: ${
+          ride.customerName
+        }\n🏠 Room: ${ride.roomNumber}\n📞 Phone: ${
+          ride.phoneNumber
+        }\n🚙 Vehicle: ${ride.vehicleNumber || "N/A"}`,
+        url: "",
+      }
+
+      const result = await Share.share(shareContent, {
+        dialogTitle: "Share Ride Details",
+        subject: "Ride Information", // For email sharing
+      })
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log("Shared via:", result.activityType)
+        } else {
+          console.log("Shared successfully")
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("Share dismissed")
+      }
+    } catch (error) {
+      console.error("Error sharing:", error)
+      Alert.alert("Error", "Failed to share ride details. Please try again.")
+    }
+  }
+
   return (
     <>
       {data.map((ride, index) => (
-        <Pressable key={ride._id || index}>
+        <Pressable
+          key={ride._id || index}
+          onPress={() => handlePress(ride)}>
           <View style={styles.container}>
             {ride.customerPhoto === "pending" ? (
               <SkeletonBox
@@ -64,19 +174,19 @@ const RidesCard = ({ data }: Props) => {
                 </View>
               </View>
               <View style={styles.actionButtons}>
-                <Pressable>
-                  <Edit
+                <Pressable onPress={() => handleDelete(ride._id)}>
+                  <Delete
                     height={24}
                     width={24}
                   />
                 </Pressable>
-                <Pressable>
-                  <Share
+                <Pressable onPress={() => handleShare(ride)}>
+                  <ShareImg
                     height={24}
                     width={24}
                   />
                 </Pressable>
-                <Pressable>
+                <Pressable onPress={() => handleCall(ride.phoneNumber)}>
                   <Call
                     height={24}
                     width={24}

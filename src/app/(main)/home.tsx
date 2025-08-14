@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react"
 import {
   View,
   Text,
@@ -7,46 +7,90 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-} from "react-native";
-const { width, height } = Dimensions.get("window");
-import { StatusBar } from "react-native";
-import Colors from "../../constants/Colors";
-import { useAuth } from "../../contexts/AuthContext";
-import CardContainer from "../../components/CardContainer";
-import { useRouter } from "expo-router";
-import { Values } from "../../constants/Values";
+  ScrollView,
+} from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
+const { width, height } = Dimensions.get("window")
+import { StatusBar } from "react-native"
+import Colors from "../../constants/Colors"
+import { useAuth } from "../../contexts/AuthContext"
+import CardContainer from "../../components/CardContainer"
+import RecentRides from "../../components/RecentRides"
+import { useRouter } from "expo-router"
+import { Values } from "../../constants/Values"
 
 const HomeScreen = () => {
-  const user = useAuth();
-  const router = useRouter();
+  const user = useAuth()
+  const router = useRouter()
+  const [refreshRecentRides, setRefreshRecentRides] = useState(false)
+
+  // Function to trigger RecentRides refresh
+  const triggerRecentRidesRefresh = useCallback(() => {
+    setRefreshRecentRides(true)
+  }, [])
+
+  // Callback when refresh is complete
+  const onRefreshComplete = useCallback(() => {
+    setRefreshRecentRides(false)
+  }, [])
+
+  // Auto-refresh RecentRides when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      triggerRecentRidesRefresh()
+    }, [])
+  )
+
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+
+    if (hour < 12) {
+      return "Good Morning!"
+    } else if (hour < 17) {
+      return "Good Afternoon!"
+    } else {
+      return "Good Evening!"
+    }
+  }
 
   return (
     <View style={styles.container}>
       {/* <StatusBar translucent /> */}
 
-      <View style={styles.blueSection} />
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        <View style={styles.blueSection} />
 
-      <View style={styles.mainContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => {
-              router.push("/(screens)/profile");
-            }}>
-            <Image
-              source={require("../../assets/images/profile.png")}
-              style={styles.profileimg}
-            />
-          </TouchableOpacity>
-          <View style={{ gap: 5 }}>
-            <Text style={styles.greeting}>Good Morning!</Text>
-            <Text style={styles.userName}>{user?.user?.username}</Text>
+        <View style={styles.mainContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/(screens)/profile")
+              }}>
+              <Image
+                source={require("../../assets/images/profile.png")}
+                style={styles.profileimg}
+              />
+            </TouchableOpacity>
+            <View style={{ gap: 5 }}>
+              <Text style={styles.greeting}>{getGreeting()}</Text>
+              <Text style={styles.userName}>{user?.user?.username}</Text>
+            </View>
           </View>
+          <CardContainer />
         </View>
-        <CardContainer />
-      </View>
+
+        {/* Recent Rides Section */}
+        <RecentRides
+          shouldRefresh={refreshRecentRides}
+          onRefreshComplete={onRefreshComplete}
+        />
+      </ScrollView>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -56,21 +100,26 @@ const styles = StyleSheet.create({
   },
 
   blueSection: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
     height: height * 0.39,
     backgroundColor: Colors.primary,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
+    marginBottom: -height * 0.32,
+  },
+
+  scrollView: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
   },
 
   mainContainer: {
-    flex: 1,
     paddingHorizontal: Values.paddingHorizontal,
-    paddingTop: 60,
     gap: 60,
+    marginBottom: 40, // Add some spacing before recent rides
+    zIndex: 1, // Ensure content appears above the blue section
   },
 
   profileimg: {
@@ -97,6 +146,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: Colors.white,
   },
-});
+})
 
-export default HomeScreen;
+export default HomeScreen
