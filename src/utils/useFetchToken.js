@@ -11,7 +11,6 @@ const useFetchToken = () => {
         const accessToken = await getAccessToken()
         setToken(accessToken)
       } catch (error) {
-        console.error("Error fetching access token:", error)
         Alert.alert("Error", "Failed to authenticate. Please try again.")
       }
     }

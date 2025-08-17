@@ -10,6 +10,7 @@ import {
   Linking,
   AppState,
   ImageBackground,
+  Alert,
 } from "react-native";
 import Upload from "../assets/icons/upload.svg";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
@@ -73,7 +74,8 @@ const UploadPhoto = ({ title,captureImage }: Props) => {
         captureImage(res.uri);
         setIsModalVisible(false);
       } catch (error) {
-        console.error("Error taking picture:", error);
+
+        Alert.alert("Error taking picture:", error?.message)
       }
     }
   };

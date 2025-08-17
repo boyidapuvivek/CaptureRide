@@ -54,7 +54,7 @@ const Qr = () => {
           )
         }
       } catch (error) {
-        console.error("Error requesting permissions:", error)
+        Alert.alert("Error requesting permissions", error?.message)
       }
     }
 
@@ -79,14 +79,13 @@ const Qr = () => {
         },
       })
 
-      const qrData = response?.data?.data?.qrs || []
+      const qrData = response?.data?.qrs || []
       setQrImages(qrData)
 
       if (qrData.length > 0) {
         setCurrentIndex(0)
       }
     } catch (error) {
-      console.error("Error fetching QR images:", error)
       Alert.alert("Error", "Failed to load QR images")
     } finally {
       setIsLoadingImages(false)
@@ -106,12 +105,11 @@ const Qr = () => {
 
       if (!result.canceled && result.assets?.[0]) {
         const imageUri = result.assets[0].uri
-        console.log("Selected bank:", bankName)
+
         setSelectedImage(imageUri)
         await uploadImage(imageUri, bankName) // pass bankName if needed
       }
     } catch (error) {
-      console.error("Error picking image:", error)
       Alert.alert("Error", "Failed to pick image")
     }
   }
@@ -145,7 +143,6 @@ const Qr = () => {
         await fetchQRImages()
       }
     } catch (error) {
-      console.error("Error uploading QR:", error)
       Alert.alert("Error", "Failed to upload QR code")
     } finally {
       setIsLoading(false)
@@ -180,7 +177,6 @@ const Qr = () => {
             Alert.alert("Deleted", "QR code deleted successfully")
             await fetchQRImages()
           } catch (error) {
-            console.error("Error deleting QR:", error)
             Alert.alert("Error", "Failed to delete QR code")
           }
         },

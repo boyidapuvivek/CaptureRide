@@ -22,24 +22,6 @@ import { Values } from "../../constants/Values"
 const HomeScreen = () => {
   const user = useAuth()
   const router = useRouter()
-  const [refreshRecentRides, setRefreshRecentRides] = useState(false)
-
-  // Function to trigger RecentRides refresh
-  const triggerRecentRidesRefresh = useCallback(() => {
-    setRefreshRecentRides(true)
-  }, [])
-
-  // Callback when refresh is complete
-  const onRefreshComplete = useCallback(() => {
-    setRefreshRecentRides(false)
-  }, [])
-
-  // Auto-refresh RecentRides when screen comes into focus
-  useFocusEffect(
-    useCallback(() => {
-      triggerRecentRidesRefresh()
-    }, [])
-  )
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -83,10 +65,7 @@ const HomeScreen = () => {
         </View>
 
         {/* Recent Rides Section */}
-        <RecentRides
-          shouldRefresh={refreshRecentRides}
-          onRefreshComplete={onRefreshComplete}
-        />
+        <RecentRides />
       </ScrollView>
     </View>
   )
@@ -100,7 +79,7 @@ const styles = StyleSheet.create({
   },
 
   blueSection: {
-    height: height * 0.39,
+    height: height * 0.38,
     backgroundColor: Colors.primary,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
@@ -117,7 +96,7 @@ const styles = StyleSheet.create({
 
   mainContainer: {
     paddingHorizontal: Values.paddingHorizontal,
-    gap: 60,
+    gap: 30,
     marginBottom: 40, // Add some spacing before recent rides
     zIndex: 1, // Ensure content appears above the blue section
   },

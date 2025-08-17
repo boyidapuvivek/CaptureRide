@@ -33,7 +33,6 @@ const AllRides = () => {
         const accessToken = await getAccessToken()
         setToken(accessToken)
       } catch (error) {
-        console.error("Error fetching access token:", error)
         setInitialLoading(false)
       }
     }
@@ -68,8 +67,11 @@ const AllRides = () => {
         timeout: 5000,
       })
 
-      const responseData = res.data?.data
-      const rides = Array.isArray(responseData?.rides) ? responseData.rides : []
+      const responseData = res?.data
+
+      const rides = Array.isArray(responseData?.rides)
+        ? responseData?.rides
+        : []
 
       if (isRefresh) {
         setData(rides)
@@ -83,7 +85,6 @@ const AllRides = () => {
 
       setHasMore(responseData?.pagination?.hasNext || false)
     } catch (error) {
-      console.error("Error fetching rides:", error)
     } finally {
       setLoading(false)
       setInitialLoading(false)

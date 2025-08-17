@@ -1,47 +1,114 @@
-import Google from "../../assets/images/google.svg";
-import TextInputField from "../../components/TextInputField";
-import Colors from "../../constants/Colors";
-import { useAuth } from "../../contexts/AuthContext";
-import { useRouter } from "expo-router";
-import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native";
-import { useState } from "react";
-import * as SecureStore from "expo-secure-store";
-import { signupUser } from "../../api/auth";
-import axios from "axios";
-import { Values } from "../../constants/Values";
-import { apiRoute } from "../../api/apiConfig";
+import Google from "../../assets/images/google.svg"
+import TextInputField from "../../components/TextInputField"
+import Colors from "../../constants/Colors"
+import { useAuth } from "../../contexts/AuthContext"
+import { useRouter } from "expo-router"
+import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native"
+import { useState } from "react"
+import * as SecureStore from "expo-secure-store"
+import axios from "axios"
+import { Values } from "../../constants/Values"
+import { apiRoute } from "../../api/apiConfig"
+import { signupSchema } from "../../utils/validationSchemas"
 
 const SignUpScreen = () => {
-  const router = useRouter();
-  const { login } = useAuth();
+  const router = useRouter()
+  const { login } = useAuth()
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errors, setErrors] = useState<{
+    username?: string
+    email?: string
+    password?: string
+  }>({})
 
-  const handleSignup = async (username, email, password) => {
-    if (!username || !email || !password)
-      return Alert.alert("All fields are required", "Please enter all fields");
+  const validateFields = () => {
+    const validation = signupSchema.safeParse({ username, email, password })
+
+    if (!validation.success) {
+      const fieldErrors: {
+        username?: string
+        email?: string
+        password?: string
+      } = {}
+
+      validation.error.errors.forEach((error) => {
+        const fieldName = error.path[0] as string
+        if (
+          fieldName === "username" ||
+          fieldName === "email" ||
+          fieldName === "password"
+        ) {
+          fieldErrors[fieldName] = error.message
+        }
+      })
+
+      setErrors(fieldErrors)
+      return false
+    }
+
+    setErrors({})
+    return true
+  }
+
+  const handleSignup = async (
+    username: string,
+    email: string,
+    password: string
+  ) => {
+    if (!validateFields()) {
+      return
+    }
 
     try {
       const res = await axios.post(apiRoute.REGISTER, {
         username,
         email,
         password,
-      });
+      })
 
-      const data = res.data;
-
-      router.push("/(auth)/login");
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", error?.message);
+      const data = res.data
+      Alert.alert("Success", "Account created successfully!", [
+        {
+          text: "OK",
+          onPress: () => router.push("/(auth)/login"),
+        },
+      ])
+    } catch (error: any) {
+      Alert.alert(
+        "Error",
+        error?.response?.data?.error || error?.message || "Something went wrong"
+      )
     }
-  };
+  }
+
+  const handleUsernameChange = (text: string) => {
+    setUsername(text)
+    if (errors.username) {
+      setErrors((prev) => ({ ...prev, username: undefined }))
+    }
+  }
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text)
+    if (errors.email) {
+      setErrors((prev) => ({ ...prev, email: undefined }))
+    }
+  }
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text)
+    if (errors.password) {
+      setErrors((prev) => ({ ...prev, password: undefined }))
+    }
+  }
 
   const handleLogin = () => {
-    router.push("/(auth)/login");
-  };
+    router.push("/(auth)/login")
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.maincontainer}>
@@ -56,18 +123,21 @@ const SignUpScreen = () => {
         <TextInputField
           placeholder='Username'
           value={username}
-          onChangeText={setUsername}
+          onChangeText={handleUsernameChange}
+          error={errors.username}
         />
         <TextInputField
           placeholder='Email'
           value={email}
-          onChangeText={setEmail}
+          onChangeText={handleEmailChange}
+          error={errors.email}
         />
         <TextInputField
           placeholder='Password'
           secureTextEntry
           value={password}
-          onChangeText={setPassword}
+          onChangeText={handlePasswordChange}
+          error={errors.password}
         />
       </View>
 
@@ -87,8 +157,8 @@ const SignUpScreen = () => {
         </Text>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -164,6 +234,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.grayText,
   },
-});
+})
 
-export default SignUpScreen;
+export default SignUpScreen

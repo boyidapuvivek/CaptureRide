@@ -1,9 +1,8 @@
-import Google from "../../assets/images/google.svg";
-import TextInputField from "../../components/TextInputField";
-import Colors from "../../constants/Colors";
-import { useRouter } from "expo-router";
+import Google from "../../assets/images/google.svg"
+import TextInputField from "../../components/TextInputField"
+import Colors from "../../constants/Colors"
+import { useRouter } from "expo-router"
 import {
-  TouchableOpacity,
   StyleSheet,
   Text,
   View,
@@ -14,135 +13,147 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   BackHandler,
-} from "react-native";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useAuth } from "../../contexts/AuthContext";
-import CustomButton from "../../components/CustomButton";
-import { post } from "../../api/apiClient";
-import { Values } from "../../constants/Values";
-import Loader from "../../components/Loader";
-import { apiRoute } from "../../api/apiConfig";
+} from "react-native"
+import { useState, useEffect } from "react"
+import axios from "axios"
+import { useAuth } from "../../contexts/AuthContext"
+import CustomButton from "../../components/CustomButton"
+import Loader from "../../components/Loader"
+import { apiRoute } from "../../api/apiConfig"
+import { Values } from "../../constants/Values"
+import { loginSchema } from "../../utils/validationSchemas"
 
 const LoginScreen = () => {
-  const router = useRouter();
-  const { login } = useAuth();
+  const router = useRouter()
+  const { login } = useAuth()
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<{
+    email?: string
+    password?: string
+  }>({})
 
   useEffect(() => {
-    const backAction = () => {
-      return true; // Returning true disables back navigation
-    };
-
+    const backAction = () => true // disable back
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
-    );
+    )
+    return () => backHandler.remove()
+  }, [])
 
-    return () => backHandler.remove();
-  }, []);
+  const validateFields = () => {
+    const validation = loginSchema.safeParse({ email, password })
 
-  const handleLogin = async (email, password) => {
-    if (!email || !password)
-      return Alert.alert(
-        "All fields are required",
-        "Please enter all the fields"
-      );
-    setLoading(true);
-    try {
-      const res = await axios.post(apiRoute.LOGIN, {
-        email,
-        password,
-      });
+    if (!validation.success) {
+      const fieldErrors: { email?: string; password?: string } = {}
 
-      // const res = await post(apiRoute.LOGIN, { email, password });
+      validation.error.errors.forEach((error) => {
+        const fieldName = error.path[0] as string
+        if (fieldName === "email" || fieldName === "password") {
+          fieldErrors[fieldName] = error.message
+        }
+      })
 
-      const { accessToken, refreshToken, userData } = res?.data?.data;
-
-      await login(accessToken, refreshToken, userData);
-      setLoading(false);
-      router.replace("/(main)/home");
-    } catch (err) {
-      if (err.response?.data?.error) {
-        Alert.alert("Login failed", err.response.data.error);
-        setLoading(false);
-      } else {
-        Alert.alert("Network error", err || "Something went wrong");
-        setLoading(false);
-      }
+      setErrors(fieldErrors)
+      return false
     }
-  };
 
-  const handleSignup = () => {
-    router.push("/(auth)/signup");
-  };
+    setErrors({})
+    return true
+  }
 
-  const handleForgetPassword = () => {
-    router.push("/(auth)/forgetpassword");
-  };
+  const handleLogin = async (email: string, password: string) => {
+    if (!validateFields()) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await axios.post(apiRoute.LOGIN, { email, password })
+      const { accessToken, refreshToken, userData } = res?.data
+      await login(accessToken, refreshToken, userData)
+      setLoading(false)
+      router.replace("/(main)/home")
+    } catch (err: any) {
+      Alert.alert("Login failed", err?.message || "Something went wrong")
+      setLoading(false)
+    }
+  }
+
+  const handleEmailChange = (text: string) => {
+    setEmail(text)
+    if (errors.email) {
+      setErrors((prev) => ({ ...prev, email: undefined }))
+    }
+  }
+
+  const handlePasswordChange = (text: string) => {
+    setPassword(text)
+    if (errors.password) {
+      setErrors((prev) => ({ ...prev, password: undefined }))
+    }
+  }
 
   return loading ? (
     <Loader />
   ) : (
-    <>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <View style={styles.maincontainer}>
-            <Text style={styles.text}>Login</Text>
-            <View style={styles.signup}>
-              <Google />
-              <Text style={styles.signuptext}>Google</Text>
-            </View>
-
-            <Text style={styles.divide}>Or</Text>
-
-            <TextInputField
-              placeholder='Phone number or Email'
-              value={email}
-              onChangeText={setEmail}
-            />
-
-            <TextInputField
-              placeholder='Password'
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-
-            <Pressable
-              onPress={handleForgetPassword}
-              style={{ alignSelf: "flex-end" }}>
-              <Text style={styles.forgettext}>Forget Password?</Text>
-            </Pressable>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View style={styles.maincontainer}>
+          <Text style={styles.text}>Login</Text>
+          <View style={styles.signup}>
+            <Google />
+            <Text style={styles.signuptext}>Google</Text>
           </View>
 
-          <KeyboardAvoidingView
-            style={styles.bottomContainer}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={20}>
-            <CustomButton
-              title={"Login"}
-              onPress={() => {
-                handleLogin(email, password);
-              }}
-            />
-            <Text style={styles.login}>
-              Don't have an account?{" "}
-              <Text
-                onPress={handleSignup}
-                style={styles.logintext}>
-                Sign up
-              </Text>
-            </Text>
-          </KeyboardAvoidingView>
+          <Text style={styles.divide}>Or</Text>
+
+          <TextInputField
+            placeholder='Phone number or Email'
+            value={email}
+            onChangeText={handleEmailChange}
+            error={errors.email}
+          />
+
+          <TextInputField
+            placeholder='Password'
+            secureTextEntry
+            value={password}
+            onChangeText={handlePasswordChange}
+            error={errors.password}
+          />
+
+          <Pressable
+            onPress={() => router.push("/(auth)/forgetpassword")}
+            style={{ alignSelf: "flex-end" }}>
+            <Text style={styles.forgettext}>Forget Password?</Text>
+          </Pressable>
         </View>
-      </TouchableWithoutFeedback>
-    </>
-  );
-};
+
+        <KeyboardAvoidingView
+          style={styles.bottomContainer}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={20}>
+          <CustomButton
+            title='Login'
+            onPress={() => handleLogin(email, password)}
+          />
+          <Text style={styles.login}>
+            Don't have an account?{" "}
+            <Text
+              onPress={() => router.push("/(auth)/signup")}
+              style={styles.logintext}>
+              Sign up
+            </Text>
+          </Text>
+        </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -185,12 +196,6 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingBottom: "20%",
   },
-  buttontext: {
-    fontFamily: "poppins-medium",
-    fontSize: 16,
-    color: Colors.white,
-    textAlign: "center",
-  },
   login: {
     fontFamily: "poppins-regular",
     fontSize: 14,
@@ -205,6 +210,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.grayText,
   },
-});
+})
 
-export default LoginScreen;
+export default LoginScreen

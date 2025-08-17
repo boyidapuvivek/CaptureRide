@@ -79,7 +79,6 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
               }
             }
           } catch (error) {
-            console.error("Delete error:", error)
             Alert.alert("Error", "Failed to delete ride. Please try again.")
           }
         },
@@ -95,7 +94,6 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
 
       await Linking.openURL(phoneUrl)
     } catch (error) {
-      console.error("Error making call:", error)
       Alert.alert("Error", "Failed to make call. Please try again.")
     }
   }
@@ -119,15 +117,14 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
 
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
-          console.log("Shared via:", result.activityType)
+          Alert.alert("Shared via:", result.activityType)
         } else {
-          console.log("Shared successfully")
+          alert("Shared successfully")
         }
       } else if (result.action === Share.dismissedAction) {
-        console.log("Share dismissed")
+        alert("Shared successfully")
       }
     } catch (error) {
-      console.error("Error sharing:", error)
       Alert.alert("Error", "Failed to share ride details. Please try again.")
     }
   }
