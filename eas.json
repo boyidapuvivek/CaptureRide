@@ -13,6 +13,13 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "apkRelease": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      }
     }
   },
   "submit": {

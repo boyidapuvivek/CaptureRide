@@ -107,6 +107,7 @@ const Qr = () => {
         const imageUri = result.assets[0].uri
 
         setSelectedImage(imageUri)
+
         await uploadImage(imageUri, bankName) // pass bankName if needed
       }
     } catch (error) {

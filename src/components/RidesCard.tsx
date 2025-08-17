@@ -145,13 +145,14 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
               />
             ) : (
               <Image
-                source={{ uri: ride.customerPhoto }}
+                source={{ uri: ride?.customerPhoto }}
                 style={styles.image}
+                resizeMode='contain'
               />
             )}
             <View style={styles.mainContainer}>
               <View>
-                <Text style={styles.customerName}>{ride.customerName}</Text>
+                <Text style={styles.customerName}>{ride?.customerName}</Text>
                 <View style={styles.customerDataField}>
                   <View style={styles.dataField}>
                     <Number

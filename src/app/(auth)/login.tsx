@@ -1,4 +1,3 @@
-import Google from "../../assets/images/google.svg"
 import TextInputField from "../../components/TextInputField"
 import Colors from "../../constants/Colors"
 import { useRouter } from "expo-router"
@@ -13,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   BackHandler,
+  Dimensions,
 } from "react-native"
 import { useState, useEffect } from "react"
 import axios from "axios"
@@ -22,6 +22,8 @@ import Loader from "../../components/Loader"
 import { apiRoute } from "../../api/apiConfig"
 import { Values } from "../../constants/Values"
 import { loginSchema } from "../../utils/validationSchemas"
+
+const { width, height } = Dimensions.get("window")
 
 const LoginScreen = () => {
   const router = useRouter()
@@ -104,12 +106,6 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <View style={styles.maincontainer}>
           <Text style={styles.text}>Login</Text>
-          <View style={styles.signup}>
-            <Google />
-            <Text style={styles.signuptext}>Google</Text>
-          </View>
-
-          <Text style={styles.divide}>Or</Text>
 
           <TextInputField
             placeholder='Phone number or Email'
@@ -160,54 +156,56 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     backgroundColor: Colors.white,
-    paddingHorizontal: Values.paddingHorizontal,
+    paddingHorizontal: width * 0.05, // 5% of screen width
   },
   maincontainer: {
+    flex: 1,
     alignItems: "center",
-    paddingTop: "26%",
-    paddingBottom: "4%",
-    gap: 26,
+    paddingTop: height * 0.12, // ~12% of screen height
+    paddingBottom: height * 0.04, // ~4% of screen height
+    gap: height * 0.03, // spacing relative to screen height
   },
   text: {
     fontFamily: "poppins-bold",
-    fontSize: 32,
+    fontSize: width * 0.08, // responsive font size (8% of screen width)
     color: Colors.primaryText,
+    marginBottom: height * 0.08, // spacing responsive
   },
   signup: {
     flexDirection: "row",
-    gap: 10,
+    gap: width * 0.03,
     backgroundColor: Colors.transparent,
     borderRadius: 18,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.012,
   },
   signuptext: {
     fontFamily: "poppins-medium",
-    fontSize: 16,
+    fontSize: width * 0.04,
     color: Colors.gray,
   },
   divide: {
-    fontSize: 14,
+    fontSize: width * 0.035,
     color: Colors.gray,
     fontFamily: "poppins-medium",
   },
   bottomContainer: {
     alignItems: "center",
-    gap: 20,
-    paddingBottom: "20%",
+    gap: height * 0.025,
+    paddingBottom: height * 0.1, // 10% of screen height
   },
   login: {
     fontFamily: "poppins-regular",
-    fontSize: 14,
+    fontSize: width * 0.035,
   },
   logintext: {
     fontFamily: "poppins-regular",
-    fontSize: 14,
+    fontSize: width * 0.035,
     color: Colors.primary,
   },
   forgettext: {
-    fontFamily: "poppin-medium",
-    fontSize: 14,
+    fontFamily: "poppins-medium",
+    fontSize: width * 0.035,
     color: Colors.grayText,
   },
 })

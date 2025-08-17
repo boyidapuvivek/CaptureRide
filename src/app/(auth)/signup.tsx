@@ -1,15 +1,23 @@
-import Google from "../../assets/images/google.svg"
 import TextInputField from "../../components/TextInputField"
 import Colors from "../../constants/Colors"
 import { useAuth } from "../../contexts/AuthContext"
 import { useRouter } from "expo-router"
-import { TouchableOpacity, StyleSheet, Text, View, Alert } from "react-native"
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  Dimensions,
+} from "react-native"
 import { useState } from "react"
-import * as SecureStore from "expo-secure-store"
 import axios from "axios"
 import { Values } from "../../constants/Values"
 import { apiRoute } from "../../api/apiConfig"
 import { signupSchema } from "../../utils/validationSchemas"
+import CustomButton from "../../components/CustomButton"
+
+const { width, height } = Dimensions.get("window")
 
 const SignUpScreen = () => {
   const router = useRouter()
@@ -69,12 +77,8 @@ const SignUpScreen = () => {
         password,
       })
 
-      const data = res.data
       Alert.alert("Success", "Account created successfully!", [
-        {
-          text: "OK",
-          onPress: () => router.push("/(auth)/login"),
-        },
+        { text: "OK", onPress: () => router.push("/(auth)/login") },
       ])
     } catch (error: any) {
       Alert.alert(
@@ -113,12 +117,6 @@ const SignUpScreen = () => {
     <View style={styles.container}>
       <View style={styles.maincontainer}>
         <Text style={styles.text}>Sign Up</Text>
-        <View style={styles.signup}>
-          <Google />
-          <Text style={styles.signuptext}>Google</Text>
-        </View>
-
-        <Text style={styles.divide}>Or</Text>
 
         <TextInputField
           placeholder='Username'
@@ -142,11 +140,12 @@ const SignUpScreen = () => {
       </View>
 
       <View style={styles.bottomContainer}>
-        <TouchableOpacity
+        <CustomButton
           onPress={() => handleSignup(username, email, password)}
-          style={styles.button}>
-          <Text style={styles.buttontext}>Sign Up</Text>
-        </TouchableOpacity>
+          style={styles.button}
+          title='Sign Up'
+        />
+
         <Text style={styles.login}>
           Do you have an account?{" "}
           <Text
@@ -163,76 +162,49 @@ const SignUpScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "space-around",
     backgroundColor: Colors.white,
-    paddingHorizontal: Values.paddingHorizontal,
+    paddingHorizontal: width * 0.06,
   },
   maincontainer: {
+    flex: 1,
     width: "100%",
-    justifyContent: "center",
     alignItems: "center",
-    textAlign: "center",
-    paddingTop: 50,
-    gap: 20,
+    justifyContent: "center",
+    gap: height * 0.025,
   },
   text: {
     fontFamily: "poppins-semibold",
-    fontSize: 32,
+    fontSize: width * 0.08,
     color: Colors.primaryText,
-  },
-  signup: {
-    flexDirection: "row",
-    gap: 10,
-    backgroundColor: Colors.transparent,
-    borderRadius: 18,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-  },
-  signuptext: {
-    fontFamily: "poppins-medium",
-    fontSize: 16,
-    color: Colors.gray,
-  },
-  divide: {
-    fontSize: 14,
-    color: Colors.gray,
-    fontFamily: "poppins-medium",
+    marginBottom: height * 0.03,
   },
   bottomContainer: {
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 20,
-    paddingBottom: 20,
+    gap: height * 0.03,
+    paddingBottom: height * 0.08,
   },
   button: {
-    height: 50,
+    height: height * 0.06,
     width: "100%",
     backgroundColor: Colors.primary,
     borderRadius: 12,
-    paddingVertical: 10,
     justifyContent: "center",
   },
   buttontext: {
     fontFamily: "poppins-medium",
-    fontSize: 16,
+    fontSize: width * 0.045,
     color: Colors.white,
     textAlign: "center",
   },
   login: {
     fontFamily: "poppins-regular",
-    fontSize: 14,
+    fontSize: width * 0.035,
   },
   logintext: {
     fontFamily: "poppins-regular",
-    fontSize: 14,
+    fontSize: width * 0.035,
     color: Colors.primary,
-  },
-  forgettext: {
-    fontFamily: "poppin-medium",
-    fontSize: 14,
-    color: Colors.grayText,
   },
 })
 

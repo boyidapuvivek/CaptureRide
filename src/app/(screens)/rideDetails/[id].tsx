@@ -48,6 +48,7 @@ export default function RideDetails() {
               <Image
                 source={{ uri: ride.customerPhoto }}
                 style={styles.profileImage}
+                resizeMode='contain'
               />
               <View style={styles.profileImageOverlay}>
                 <Ionicons
@@ -121,6 +122,7 @@ export default function RideDetails() {
                 <Image
                   source={{ uri: ride.aadharPhoto }}
                   style={styles.documentImage}
+                  resizeMode='contain'
                 />
                 <View style={styles.documentOverlay}>
                   <Ionicons
@@ -140,6 +142,7 @@ export default function RideDetails() {
                 <Image
                   source={{ uri: ride.dlPhoto }}
                   style={styles.documentImage}
+                  resizeMode='contain'
                 />
                 <View style={styles.documentOverlay}>
                   <Ionicons
