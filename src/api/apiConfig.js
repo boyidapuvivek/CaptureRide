@@ -8,6 +8,7 @@ export const apiRoute = {
   LOGIN: `${API_CONFIG.BASE_URL}/user/login`,
   REGISTER: `${API_CONFIG.BASE_URL}/user/register`,
   LOGOUT: `${API_CONFIG.BASE_URL}/user/logout`,
+  ADDPROFILE: `${API_CONFIG.BASE_URL}/user/update-profile-image`,
 
   ADDRIDE: `${API_CONFIG.BASE_URL}/ride/addRide`,
   GETRIDES: `${API_CONFIG.BASE_URL}/ride/getRides`,

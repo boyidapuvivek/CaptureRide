@@ -13,6 +13,7 @@ const AuthContext = createContext({
   user: null,
   login: () => {},
   logout: () => {},
+  updateUser: () => {},
   loading: true,
 })
 
@@ -62,8 +63,23 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  const updateUser = async (updatedUserData) => {
+    try {
+      // Update user state with new data
+      const newUserData = { ...user, ...updatedUserData }
+      setUser(newUserData)
+
+      // Store updated user data (excluding token for storage)
+      const { token, ...userDataToStore } = newUserData
+      await storeUserData(userDataToStore)
+    } catch (error) {
+      Alert.alert("Error updating user:", error?.message)
+      console.error("Error updating user data:", error)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   )

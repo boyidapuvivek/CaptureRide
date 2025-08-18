@@ -51,10 +51,17 @@ const HomeScreen = () => {
               onPress={() => {
                 router.push("/(screens)/profile")
               }}>
-              <Image
-                source={require("../../assets/images/profile.png")}
-                style={styles.profileimg}
-              />
+              {!user?.user?.avatar ? (
+                <Image
+                  source={require("../../assets/images/profile.png")}
+                  style={styles.profileimg}
+                />
+              ) : (
+                <Image
+                  source={{ uri: user?.user?.avatar }}
+                  style={styles.profileimg}
+                />
+              )}
             </TouchableOpacity>
             <View style={{ gap: 5 }}>
               <Text style={styles.greeting}>{getGreeting()}</Text>
@@ -104,6 +111,7 @@ const styles = StyleSheet.create({
   profileimg: {
     height: 60,
     width: 60,
+    borderRadius: 50,
   },
 
   header: {
