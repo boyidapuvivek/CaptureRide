@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   View,
   Text,
@@ -8,21 +8,22 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
-} from "react-native";
-import Colors from "../constants/Colors";
-import DownArrow from "../assets/icons/downarrow.svg";
+} from "react-native"
+import Colors from "../constants/Colors"
+import DownArrow from "../assets/icons/downarrow.svg"
 
 interface DropdownItem {
-  label: string;
-  value: string | number;
+  label: string
+  value: string | number
+  id?: string | number // Make id optional
 }
 
 interface CustomDropdownProps {
-  data: DropdownItem[];
-  placeholder?: string;
-  onSelect: (item: DropdownItem) => void;
-  style?: ViewStyle;
-  disabled?: boolean;
+  data: DropdownItem[]
+  placeholder?: string
+  onSelect: (item: DropdownItem) => void
+  style?: ViewStyle
+  disabled?: boolean
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -32,20 +33,20 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   style,
   disabled = false,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
+  const [isVisible, setIsVisible] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null)
 
   const toggleDropdown = () => {
     if (!disabled) {
-      setIsVisible(!isVisible);
+      setIsVisible(!isVisible)
     }
-  };
+  }
 
   const handleItemSelect = (item: DropdownItem) => {
-    setSelectedItem(item);
-    onSelect(item);
-    setIsVisible(false);
-  };
+    setSelectedItem(item)
+    onSelect(item)
+    setIsVisible(false)
+  }
 
   const renderItem = ({ item }: { item: DropdownItem }) => (
     <TouchableOpacity
@@ -62,7 +63,13 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         {item.label}
       </Text>
     </TouchableOpacity>
-  );
+  )
+
+  const renderEmptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>No data available</Text>
+    </View>
+  )
 
   return (
     <View style={style}>
@@ -88,16 +95,22 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
           onPress={toggleDropdown}>
           <View style={styles.modal}>
             <FlatList
+              showsVerticalScrollIndicator={false}
               data={data}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item, index) =>
+                item.id?.toString() ||
+                item.value?.toString() ||
+                index.toString()
+              }
               renderItem={renderItem}
+              ListEmptyComponent={renderEmptyComponent}
             />
           </View>
         </TouchableOpacity>
       </Modal>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   dropdown: {
@@ -141,7 +154,7 @@ const styles = StyleSheet.create({
 
   modal: {
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: 18,
     maxHeight: 300,
   } as ViewStyle,
 
@@ -165,6 +178,18 @@ const styles = StyleSheet.create({
     color: "#007AFF",
     fontWeight: "600",
   } as TextStyle,
-});
 
-export default CustomDropdown;
+  emptyContainer: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  } as ViewStyle,
+
+  emptyText: {
+    fontSize: 16,
+    color: Colors.grayText || "#999",
+    fontStyle: "italic",
+  } as TextStyle,
+})
+
+export default CustomDropdown

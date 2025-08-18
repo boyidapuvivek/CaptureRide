@@ -1,19 +1,19 @@
-import React from "react";
+import React from "react"
 import {
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import Colors from "../constants/Colors";
+} from "react-native"
+import Colors from "../constants/Colors"
 
 // Import SVG icons directly
-import AddRideIcon from "../assets/icons/addride.svg";
-import AllRidesIcon from "../assets/icons/allrides.svg";
-import EarningsIcon from "../assets/icons/myearnings.svg";
-import QrIcon from "../assets/icons/myqr.svg";
-import { useRouter } from "expo-router";
+import AddRideIcon from "../assets/icons/addride.svg"
+import AllRidesIcon from "../assets/icons/allrides.svg"
+import AddBikeIcon from "../assets/icons/addbike.svg"
+import QrIcon from "../assets/icons/myqr.svg"
+import { useRouter } from "expo-router"
 
 const CardsData = [
   {
@@ -29,21 +29,21 @@ const CardsData = [
     route: "/(main)/allRides",
   },
   {
-    title: "My\nEarnings",
-    Icon: EarningsIcon,
+    title: "Add\nBike",
+    Icon: AddBikeIcon,
     color: "#F736B3",
-    route: "/(main)/allRides",
+    route: "/(screens)/myBikes",
   },
   {
     title: "My\nQr's",
     Icon: QrIcon,
-    color: "#7192BE",
+    color: "#7341c2ff",
     route: "/(main)/qr",
   },
-];
+]
 
 const CardContainer = () => {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <View style={styles.cardContainer}>
@@ -53,7 +53,7 @@ const CardContainer = () => {
             style={[styles.card, { backgroundColor: item.color }]}
             key={index}
             onPress={() => {
-              router.push(item.route);
+              router.push(item.route)
             }}
             activeOpacity={0.98}>
             <Text
@@ -67,11 +67,11 @@ const CardContainer = () => {
               width={90}
             />
           </TouchableOpacity>
-        );
+        )
       })}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -94,6 +94,6 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-semibold",
     flexShrink: 1,
   },
-});
+})
 
-export default CardContainer;
+export default CardContainer

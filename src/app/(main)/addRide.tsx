@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Alert, ScrollView, StyleSheet, View } from "react-native"
 import Header from "../../components/Header"
 import TextInputField from "../../components/TextInputField"
@@ -14,29 +14,8 @@ import Loader from "../../components/Loader"
 import { Values } from "../../constants/Values"
 import { getAccessToken } from "../../utils/authUtils"
 import { apiRoute } from "../../api/apiConfig"
-
-const options = [
-  { label: "AP16AB1234", id: 1 },
-  { label: "TS09CD5678", id: 2 },
-  { label: "MH12EF9012", id: 3 },
-  { label: "KA05GH3456", id: 4 },
-  { label: "DL8CJK7890", id: 5 },
-  { label: "TN10LM4321", id: 6 },
-  { label: "RJ14NP8765", id: 7 },
-  { label: "WB20QR0987", id: 8 },
-  { label: "GJ18ST6543", id: 9 },
-  { label: "KL07UV3210", id: 10 },
-  { label: "PB11WX8765", id: 11 },
-  { label: "CG22YZ4321", id: 12 },
-  { label: "HR26JK1098", id: 13 },
-  { label: "OD02LM7654", id: 14 },
-  { label: "MP09QR3456", id: 15 },
-  { label: "UP32ST9876", id: 16 },
-  { label: "BR01UV5432", id: 17 },
-  { label: "UK08WX2109", id: 18 },
-  { label: "AS04YZ6789", id: 19 },
-  { label: "JH10AB3456", id: 20 },
-]
+import useFetchToken from "../../utils/useFetchToken"
+import { useFocusEffect } from "expo-router"
 
 const AddRide = () => {
   const [roomNumber, setRoomNumber] = useState("")
@@ -47,7 +26,40 @@ const AddRide = () => {
   const [dlPhoto, setDLPhoto] = useState("")
   const [customerPhoto, setCustomerPhoto] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [bikes, setBikes] = useState([])
+  const [bikeOptions, setBikeOptions] = useState([])
   const accessToken = getAccessToken()
+  const token = useFetchToken()
+
+  useFocusEffect(
+    useCallback(() => {
+      if (token) {
+        fetchBikes(token)
+      }
+    }, [token])
+  )
+
+  const fetchBikes = async (token: string) => {
+    try {
+      const response = await axios.get(apiRoute.GETBIKE, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      setBikes(response.data.bikes)
+
+      // Transform the bikes data to match CustomDropdown expected format
+      const transformedBikes = response.data.bikes.map((bike) => ({
+        label: `${bike.bikeName} - ${bike.bikeNumber}`,
+        value: bike.bikeNumber,
+        id: bike._id,
+      }))
+
+      setBikeOptions(transformedBikes)
+    } catch (error) {
+      Alert.alert("No Bikes", "no bikes available")
+    }
+  }
 
   const formatData = () => {
     setRoomNumber("")
@@ -159,8 +171,8 @@ const AddRide = () => {
 
           <CustomDropdown
             placeholder='Select Vehicle'
-            data={options}
-            onSelect={(item) => setVehicle(item.label)}
+            data={bikeOptions}
+            onSelect={(item) => setVehicle(item.value)}
           />
 
           <UploadPhoto

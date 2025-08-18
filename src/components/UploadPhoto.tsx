@@ -23,11 +23,11 @@ import Flip from "../assets/icons/flip.svg"
 
 type Props = {
   title?: string;
-  captureImage ?: ()=>{};
+  captureImage?: (uri: string) => void;
 };
 
-const UploadPhoto = ({ title,captureImage }: Props) => {
-  const [photo,setPhoto] = useState("");
+const UploadPhoto = ({ title, captureImage }: Props) => {
+  const [photo, setPhoto] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [permission, requestPermissions] = useCameraPermissions();
   const [isPermissionModal, setIsPermissionModal] = useState(false);
@@ -71,13 +71,18 @@ const UploadPhoto = ({ title,captureImage }: Props) => {
       try {
         const res = await cameraRef.current.takePictureAsync();
         setPhoto(res.uri);
-        captureImage(res.uri);
+        if (captureImage) {
+          captureImage(res.uri);
+        }
         setIsModalVisible(false);
       } catch (error) {
-
-        Alert.alert("Error taking picture:", error?.message)
+        Alert.alert("Error taking picture:", error?.message || "Unknown error");
       }
     }
+  };
+
+  const handleCloseCamera = () => {
+    setIsModalVisible(false);
   };
 
   const openCamera = async () => {
@@ -97,19 +102,19 @@ const UploadPhoto = ({ title,captureImage }: Props) => {
         {
           photo ? (
             <ImageBackground
-            source={{uri : photo}}
-             style={styles.imageContainer}
-             resizeMode="cover" 
-             borderRadius={18}
+              source={{ uri: photo }}
+              style={styles.imageContainer}
+              resizeMode="cover"
+              borderRadius={18}
             />
-          ):(
+          ) : (
             <View style={styles.inputContainer}>
-          <Upload
-            height={48}
-            width={48}
-          />
-          <Text style={styles.title}>{title}</Text>
-        </View>
+              <Upload
+                height={48}
+                width={48}
+              />
+              <Text style={styles.title}>{title}</Text>
+            </View>
           )
         }
       </TouchableOpacity>
@@ -117,54 +122,70 @@ const UploadPhoto = ({ title,captureImage }: Props) => {
       <Modal
         visible={isModalVisible}
         animationType="slide"
-        style={styles.modalContainer}>
-        <CameraView 
-          style={styles.camera} 
-          facing={facing} 
-          ref={cameraRef} 
-          flash={flash}
-        >
+        onRequestClose={handleCloseCamera}>
+        <View style={styles.modalWrapper}>
           <View style={styles.headerContainer}>
             <TouchableOpacity 
               style={styles.closeButton}
-              onPress={() => setIsModalVisible(false)}
+              onPress={() => {
+                setIsModalVisible(false);
+              }}
+              activeOpacity={0.7}
+              hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
             >
               <Text style={styles.closeText}>✕</Text>
             </TouchableOpacity>
           </View>
           
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={toggleCameraFacing}>
-              <Flip
-                height={64}
-                width={64}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCapture}>
-              <Capture
-                height={100}
-                width={100}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={toggleFlash}>
-              {flash === "on" ?
-              <FlashOn
-               height={64}
-                width={64}
-              />:
-                <Flash
-                height={64}
-                width={64}
-              />}
-            </TouchableOpacity>
-          </View>
-        </CameraView>
+          <CameraView 
+            style={styles.camera} 
+            facing={facing} 
+            ref={cameraRef} 
+            flash={flash}
+          >
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity 
+                onPress={toggleCameraFacing}
+                activeOpacity={0.7}
+              >
+                <Flip
+                  height={64}
+                  width={64}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={handleCapture}
+                activeOpacity={0.7}
+              >
+                <Capture
+                  height={100}
+                  width={100}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={toggleFlash}
+                activeOpacity={0.7}
+              >
+                {flash === "on" ?
+                  <FlashOn
+                    height={64}
+                    width={64}
+                  /> :
+                  <Flash
+                    height={64}
+                    width={64}
+                  />}
+              </TouchableOpacity>
+            </View>
+          </CameraView>
+        </View>
       </Modal>
 
       <Modal
         visible={isPermissionModal}
         transparent
-        animationType="fade">
+        animationType="fade"
+        onRequestClose={() => setIsPermissionModal(false)}>
         <View style={styles.overlay}>
           <View style={styles.container}>
             <Text style={styles.message}>
@@ -182,6 +203,7 @@ const UploadPhoto = ({ title,captureImage }: Props) => {
             <TouchableOpacity 
               style={styles.cancelButton}
               onPress={() => setIsPermissionModal(false)}
+              activeOpacity={0.7}
             >
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
@@ -209,7 +231,7 @@ const styles = StyleSheet.create({
     borderRightColor: "#00000026",
     borderBottomColor: "#00000026",
   },
-  imageContainer:{
+  imageContainer: {
     width: "100%",
     minHeight: 200,
   },
@@ -222,27 +244,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center"
   },
+  modalWrapper: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
   camera: {
     flex: 1,
   },
   headerContainer: {
     position: 'absolute',
-    top: 50,
+    top: 60,
     right: 20,
-    zIndex: 1,
+    zIndex: 999,
+    elevation: 999,
   },
   closeButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
-    width: 40,
-    height: 40,
+    backgroundColor: Colors.white,
+    borderRadius: 25,
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeText: {
-    color: 'white',
-    fontSize: 20,
+    color: '#007AFF',
+    fontSize: 24,
     fontWeight: 'bold',
+    lineHeight: 24,
   },
   buttonContainer: {
     flex: 1,
@@ -287,4 +315,5 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-regular",
   },
 });
+
 export default UploadPhoto;

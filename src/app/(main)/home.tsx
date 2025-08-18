@@ -79,11 +79,11 @@ const styles = StyleSheet.create({
   },
 
   blueSection: {
-    height: height * 0.38,
+    height: height * 0.34,
     backgroundColor: Colors.primary,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
-    marginBottom: -height * 0.32,
+    marginBottom: -height * 0.28,
   },
 
   scrollView: {
