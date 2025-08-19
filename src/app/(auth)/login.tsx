@@ -38,12 +38,21 @@ const LoginScreen = () => {
   }>({})
 
   useEffect(() => {
-    const backAction = () => true // disable back
+    const backAction = () => {
+      // Exit the app when back button is pressed on login screen
+      BackHandler.exitApp()
+      return true // prevent default back behavior
+    }
+
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     )
-    return () => backHandler.remove()
+
+    // Cleanup function to remove the listener when component unmounts
+    return () => {
+      backHandler.remove()
+    }
   }, [])
 
   const validateFields = () => {
@@ -113,26 +122,28 @@ const LoginScreen = () => {
         <View style={styles.maincontainer}>
           <Text style={styles.text}>Login</Text>
 
-          <TextInputField
-            placeholder='Phone number or Email'
-            value={email}
-            onChangeText={handleEmailChange}
-            error={errors.email}
-          />
+          <View style={styles.valueContainer}>
+            <TextInputField
+              placeholder='Email'
+              value={email}
+              onChangeText={handleEmailChange}
+              error={errors.email}
+            />
 
-          <TextInputField
-            placeholder='Password'
-            secureTextEntry
-            value={password}
-            onChangeText={handlePasswordChange}
-            error={errors.password}
-          />
+            <TextInputField
+              placeholder='Password'
+              secureTextEntry
+              value={password}
+              onChangeText={handlePasswordChange}
+              error={errors.password}
+            />
 
-          <Pressable
-            onPress={() => router.push("/(auth)/forgetpassword")}
-            style={{ alignSelf: "flex-end" }}>
-            <Text style={styles.forgettext}>Forget Password?</Text>
-          </Pressable>
+            <Pressable
+              onPress={() => router.push("/(auth)/forgetpassword")}
+              style={{ alignSelf: "flex-end" }}>
+              <Text style={styles.forgettext}>Forget Password?</Text>
+            </Pressable>
+          </View>
         </View>
 
         <KeyboardAvoidingView
@@ -167,15 +178,16 @@ const styles = StyleSheet.create({
   maincontainer: {
     flex: 1,
     alignItems: "center",
-    paddingTop: height * 0.12, // ~12% of screen height
-    paddingBottom: height * 0.04, // ~4% of screen height
-    gap: height * 0.03, // spacing relative to screen height
+    justifyContent: "center",
   },
   text: {
     fontFamily: "poppins-bold",
     fontSize: width * 0.08, // responsive font size (8% of screen width)
     color: Colors.primaryText,
     marginBottom: height * 0.08, // spacing responsive
+  },
+  valueContainer: {
+    gap: 20,
   },
   signup: {
     flexDirection: "row",

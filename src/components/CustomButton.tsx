@@ -1,14 +1,15 @@
-import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import Colors from "../constants/Colors";
+import React from "react"
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native"
+import Colors from "../constants/Colors"
 
 type Props = {
-  title: String;
-  onPress: () => {};
-  color?: String;
-  fontColor?: String;
-  width?: String;
-};
+  title: String
+  onPress: () => {}
+  color?: String
+  fontColor?: String
+  width?: String
+  disable?: Boolean
+}
 
 const CustomButton = ({
   title,
@@ -17,23 +18,33 @@ const CustomButton = ({
   fontColor,
   width,
   padding,
+  disable = false,
 }: Props) => {
   const dynamicStyles = {
     backgroundColor: color || Colors.primary,
     width: width || "100%",
-  };
+  }
+  const disableStyles = {
+    backgroundColor: Colors.borderColor,
+    width: width || "100%",
+  }
 
   return (
     <TouchableOpacity
-      style={[styles.button, dynamicStyles]}
+      style={
+        disable
+          ? [styles.button, disableStyles]
+          : [styles.button, dynamicStyles]
+      }
       activeOpacity={0.8}
-      onPress={onPress}>
+      onPress={onPress}
+      disabled={disable}>
       <Text style={[styles.text, { color: fontColor || Colors.white }]}>
         {title}
       </Text>
     </TouchableOpacity>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   button: {
@@ -47,6 +58,6 @@ const styles = StyleSheet.create({
     color: Colors.white,
     textAlign: "center",
   },
-});
+})
 
-export default CustomButton;
+export default CustomButton

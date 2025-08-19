@@ -23,6 +23,7 @@ import { apiRoute } from "../../api/apiConfig"
 import { getAccessToken } from "../../utils/authUtils"
 import SkeletonBox from "../../utils/SkeletonBox"
 import useFetchToken from "../../utils/useFetchToken"
+import Loader from "../../components/Loader"
 
 const { width: screenWidth } = Dimensions.get("window")
 const IMAGE_WIDTH = screenWidth - Values.paddingHorizontal * 2
@@ -166,6 +167,7 @@ const Qr = () => {
         style: "destructive",
         onPress: async () => {
           try {
+            setIsLoading(true)
             await axios.delete(apiRoute.DELETEQR, {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -174,10 +176,11 @@ const Qr = () => {
                 id: currentQr._id,
               },
             })
-
+            setIsLoading(false)
             Alert.alert("Deleted", "QR code deleted successfully")
             await fetchQRImages()
           } catch (error) {
+            setIsLoading(false)
             Alert.alert("Error", "Failed to delete QR code")
           }
         },
@@ -210,7 +213,19 @@ const Qr = () => {
 
   const renderQRImages = () => {
     if (isLoadingImages) {
-      return <SkeletonBox style={styles.qrImage} />
+      return (
+        <View style={styles.skeletonContainer}>
+          <SkeletonBox
+            height={40}
+            width={140}
+          />
+          <SkeletonBox style={styles.skeletonImage} />
+          <SkeletonBox
+            height={50}
+            width={80}
+          />
+        </View>
+      )
     }
 
     if (qrImages.length === 0) {
@@ -220,7 +235,7 @@ const Qr = () => {
             height={IMAGE_HEIGHT}
             width={IMAGE_WIDTH}
           />
-          <Text style={styles.noQrText}>No QR codes available</Text>
+          <Text style={styles.noQrText}>Add QR to display them</Text>
         </View>
       )
     }
@@ -276,25 +291,32 @@ const Qr = () => {
   return (
     <View style={styles.container}>
       <Header title='QR Codes' />
-      <View style={styles.mainContainer}>
-        {renderQRImages()}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <View style={styles.mainContainer}>
+            {renderQRImages()}
 
-        <View style={styles.buttonContainer}>
-          <CustomButton
-            title={isLoading ? "Uploading..." : "Add QR"}
-            width={140}
-            onPress={showImagePickerOptions}
-            disabled={isLoading}
-          />
-          <CustomButton
-            title='Delete Qr'
-            color={Colors.red}
-            fontColor={Colors.white}
-            width={140}
-            onPress={deleteQrImage}
-          />
-        </View>
-      </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title={"Add QR"}
+                width={140}
+                onPress={showImagePickerOptions}
+                disable={isLoadingImages}
+              />
+              <CustomButton
+                title='Delete Qr'
+                color={Colors.red}
+                fontColor={Colors.white}
+                width={140}
+                onPress={deleteQrImage}
+                disable={isLoadingImages}
+              />
+            </View>
+          </View>
+        </>
+      )}
 
       <Modal
         animationType='slide'
@@ -359,7 +381,6 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     width: IMAGE_WIDTH,
-    // height: IMAGE_HEIGHT,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 10,
@@ -370,10 +391,23 @@ const styles = StyleSheet.create({
     height: IMAGE_HEIGHT - 20,
     borderRadius: 12,
   },
+  //Skleton styles
+  skeletonContainer: {
+    height: 400,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  skeletonImage: {
+    width: IMAGE_WIDTH - 100,
+    height: IMAGE_HEIGHT - 20,
+    borderRadius: 12,
+  },
+
   placeholderContainer: {
     alignItems: "center",
     justifyContent: "center",
-    height: IMAGE_HEIGHT,
+    height: 400,
   },
   noQrText: {
     marginTop: 20,

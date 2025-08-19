@@ -17,7 +17,7 @@ export const signupSchema = z.object({
   username: z
     .string()
     .min(3, { message: "Username must be at least 3 characters" })
-    .regex(/^[a-zA-Z0-9]+$/, {
+    .regex(/^[a-zA-Z0-9 ]+$/, {
       message: "Username can only contain letters and numbers",
     }),
   email: z
@@ -37,7 +37,7 @@ export const editProfileSchema = z
     username: z
       .string()
       .min(3, { message: "Username must be at least 3 characters" })
-      .regex(/^[a-zA-Z0-9]+$/, {
+      .regex(/^[a-zA-Z0-9 ]+$/, {
         message: "Username can only contain letters and numbers",
       })
       .optional()
@@ -91,4 +91,37 @@ export const editProfileSchema = z
         })
       }
     }
+  })
+
+// Email validation schema
+export const emailSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email address" }),
+})
+
+// OTP validation schema
+export const otpSchema = z.object({
+  otp: z
+    .string()
+    .min(6, { message: "OTP must be 6 digits" })
+    .max(6, { message: "OTP must be 6 digits" })
+    .regex(/^\d{6}$/, { message: "OTP must contain only numbers" }),
+})
+
+// Password reset validation schema
+export const resetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" })
+      .regex(/^(?=.*[a-zA-Z])(?=.*\d)/, {
+        message: "Password must include letters and numbers",
+      }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
   })

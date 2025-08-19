@@ -11,7 +11,7 @@ import {
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons"
 import * as ImagePicker from "expo-image-picker"
 import CustomButton from "../../components/CustomButton"
-import { useAuth } from "../../contexts/AuthContext"
+import { AuthProvider, useAuth } from "../../contexts/AuthContext"
 import { handleError } from "../../utils/errorHandler"
 import { useRouter } from "expo-router"
 import Colors from "../../constants/Colors"
@@ -21,6 +21,8 @@ import axios from "axios"
 import { getAccessToken } from "../../utils/authUtils"
 import Edit from "../../assets/icons/allRides/edit.svg"
 import Bike from "../../assets/icons/scooter.svg"
+import Info from "../../assets/icons/info.svg"
+import Dev from "../../assets/icons/dev.svg"
 import { apiRoute } from "../../api/apiConfig"
 
 const Profile = () => {
@@ -28,6 +30,54 @@ const Profile = () => {
   const router = useRouter()
   const accessToken = getAccessToken()
   const [isUploading, setIsUploading] = useState(false)
+
+  // Define quick actions (add icon, label, and handler)
+  const quickActions = [
+    {
+      id: "edit",
+      label: "Edit Profile",
+      icon: (
+        <Edit
+          height={24}
+          width={24}
+        />
+      ),
+      onPress: () => router.push("/(screens)/editProfile"),
+    },
+    {
+      id: "bikes",
+      label: "My Bikes",
+      icon: (
+        <Bike
+          height={24}
+          width={24}
+        />
+      ),
+      onPress: () => router.push("/(screens)/myBikes"),
+    },
+    {
+      id: "info",
+      label: "Info",
+      icon: (
+        <Info
+          height={24}
+          width={24}
+        />
+      ),
+      onPress: () => router.push("/(screens)/aboutApp"),
+    },
+    {
+      id: "dev",
+      label: "Developer",
+      icon: (
+        <Dev
+          height={24}
+          width={24}
+        />
+      ),
+      onPress: () => router.push("/(screens)/aboutDeveloper"),
+    },
+  ]
 
   const handlePress = async () => {
     try {
@@ -49,15 +99,8 @@ const Profile = () => {
     } finally {
       await logout("user logged out")
       router.replace("/(auth)/login")
+      AuthProvider().userUpdate(null)
     }
-  }
-
-  const handleEditProfile = () => {
-    router.push("/(screens)/editProfile")
-  }
-
-  const handleMyScooters = () => {
-    router.push("/(screens)/myBikes")
   }
 
   const pickImage = async () => {
@@ -205,34 +248,19 @@ const Profile = () => {
         </View>
 
         <View style={styles.quickActionsContainer}>
-          <Text style={styles.quickActionsTitle}>Quick Actions</Text>
+          <Text style={styles.quickActionsTitle}>Actions</Text>
 
           <View style={styles.actionsRow}>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleEditProfile}
-              activeOpacity={0.7}>
-              <View style={styles.iconContainer}>
-                <Edit
-                  height={24}
-                  width={24}
-                />
-              </View>
-              <Text style={styles.actionText}>Edit Profile</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleMyScooters}
-              activeOpacity={0.7}>
-              <View style={styles.iconContainer}>
-                <Bike
-                  height={24}
-                  width={24}
-                />
-              </View>
-              <Text style={styles.actionText}>My Bikes</Text>
-            </TouchableOpacity>
+            {quickActions.map((action) => (
+              <TouchableOpacity
+                key={action.id}
+                style={styles.actionButton}
+                onPress={action.onPress}
+                activeOpacity={0.7}>
+                <View style={styles.iconContainer}>{action.icon}</View>
+                <Text style={styles.actionText}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       </View>
@@ -241,6 +269,7 @@ const Profile = () => {
         <CustomButton
           title={"Logout"}
           onPress={handlePress}
+          color={Colors.red}
         />
       </View>
     </View>
@@ -311,25 +340,26 @@ const styles = StyleSheet.create({
   },
   actionsRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
+
   actionButton: {
+    width: "48%",
     alignItems: "center",
-    flex: 0.46,
-    backgroundColor: "#F8F9FA",
-    paddingVertical: 18,
+    backgroundColor: Colors.transparent,
+    paddingVertical: 24,
     paddingHorizontal: 16,
-    borderRadius: 16,
+    borderRadius: 18,
+    marginBottom: 16,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
+
   iconContainer: {
     justifyContent: "center",
     alignItems: "center",

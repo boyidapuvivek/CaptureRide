@@ -16,6 +16,8 @@ import { apiRoute } from "../../api/apiConfig"
 import { getAccessToken } from "../../utils/authUtils"
 import axios from "axios"
 import RidesCardSkeleton from "../../components/RidesCardSkeleton"
+import { Ionicons } from "@expo/vector-icons"
+import { useRouter } from "expo-router"
 
 const AllRides = () => {
   const [token, setToken] = useState<string | null>(null)
@@ -26,6 +28,7 @@ const AllRides = () => {
   const [loadingMore, setLoadingMore] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -118,6 +121,10 @@ const AllRides = () => {
     }
   }, [refreshing, loading])
 
+  const handleAddRides = () => {
+    router.push("/(main)/addRide")
+  }
+
   // Function to handle successful deletion from RidesCard
   const handleDeleteSuccess = useCallback((deletedId: string) => {
     setData((prevData) => prevData.filter((ride) => ride._id !== deletedId))
@@ -138,14 +145,42 @@ const AllRides = () => {
   }
 
   // Empty state component
+  // const EmptyState = () => (
+  //   <View style={styles.emptyContainer}>
+  //     <Text style={styles.emptyText}>No rides available</Text>
+  //     <TouchableOpacity
+  //       style={styles.refreshButton}
+  //       onPress={handleRefresh}
+  //       disabled={refreshing}>
+  //       <Text style={styles.refreshButtonText}>Tap to Refresh</Text>
+  //     </TouchableOpacity>
+  //   </View>
+  // )
   const EmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No rides available</Text>
+    <View style={styles.emptyCard}>
+      <View style={styles.iconWrapper}>
+        <Ionicons
+          name='bicycle-outline'
+          size={60}
+          color={Colors.primary}
+        />
+      </View>
+
+      <Text style={styles.emptyTitle}>No Rides Found</Text>
+      <Text style={styles.emptySubtitle}>
+        You haven’t added any rides yet. Add Rides to display data.
+      </Text>
+
       <TouchableOpacity
         style={styles.refreshButton}
-        onPress={handleRefresh}
-        disabled={refreshing}>
-        <Text style={styles.refreshButtonText}>Tap to Refresh</Text>
+        onPress={handleAddRides}
+        activeOpacity={0.8}>
+        <Ionicons
+          name='add'
+          size={18}
+          color={Colors.white}
+        />
+        <Text style={styles.refreshButtonText}>Add</Text>
       </TouchableOpacity>
     </View>
   )
@@ -200,32 +235,63 @@ const styles = StyleSheet.create({
   skeletonContainer: {
     flex: 1,
   },
-  emptyContainer: {
+  emptyCard: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 50,
+    paddingHorizontal: 25,
+    marginBottom: 100,
   },
-  emptyText: {
-    fontSize: 16,
-    color: Colors.grayText,
-    fontFamily: "poppins-medium",
-    marginBottom: 20,
-  },
-  refreshButton: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
-    minWidth: 120,
+
+  iconWrapper: {
+    height: 90,
+    width: 90,
+    borderRadius: 45,
+    backgroundColor: "#F4F7FA",
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 20,
   },
-  refreshButtonText: {
-    color: "white",
+
+  emptyTitle: {
+    fontSize: 20,
+    fontFamily: "poppins-semibold",
+    color: Colors.primaryText,
+    marginBottom: 6,
+    textAlign: "center",
+  },
+
+  emptySubtitle: {
     fontSize: 14,
     fontFamily: "poppins-medium",
+    color: Colors.grayText,
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 20,
+    paddingHorizontal: 10,
   },
+
+  refreshButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.primary,
+    borderRadius: 25,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
+  },
+
+  refreshButtonText: {
+    color: Colors.white,
+    fontSize: 15,
+    fontFamily: "poppins-semibold",
+  },
+
   emptyList: {
     flexGrow: 1,
   },
