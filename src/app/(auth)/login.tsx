@@ -80,8 +80,14 @@ const LoginScreen = () => {
       setLoading(false)
       router.replace("/(main)/home")
     } catch (err: any) {
-      Alert.alert("Login failed", err?.message || "Something went wrong")
       setLoading(false)
+      if (err?.response?.status === 401) {
+        Alert.alert("Login failed", "Invalid password")
+      } else if (err?.response?.status === 404) {
+        Alert.alert("Login failed", "Invalid email")
+      } else {
+        Alert.alert("Login failed", "Something went wrong, try again")
+      }
     }
   }
 

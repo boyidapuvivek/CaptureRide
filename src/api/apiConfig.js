@@ -1,6 +1,6 @@
 const API_CONFIG = {
-  BASE_URL: "http://192.168.1.100:5000/api/v1",
-  // BASE_URL: "https://captureridebackend.onrender.com/api/v1",
+  // BASE_URL: "http://192.168.1.100:5000/api/v1",
+  BASE_URL: "https://captureridebackend.onrender.com/api/v1",
   TIMEOUT: 10000,
 }
 
@@ -9,6 +9,7 @@ export const apiRoute = {
   REGISTER: `${API_CONFIG.BASE_URL}/user/register`,
   LOGOUT: `${API_CONFIG.BASE_URL}/user/logout`,
   ADDPROFILE: `${API_CONFIG.BASE_URL}/user/update-profile-image`,
+  EDITPROFILE: `${API_CONFIG.BASE_URL}/user/edit-profile`,
 
   ADDRIDE: `${API_CONFIG.BASE_URL}/ride/addRide`,
   GETRIDES: `${API_CONFIG.BASE_URL}/ride/getRides`,

@@ -73,7 +73,6 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
 
             if (res?.status === 200) {
               Alert.alert("Success", "Ride deleted successfully")
-              // Call the callback to update the parent component's state
               if (onDeleteSuccess) {
                 onDeleteSuccess(rideId)
               }
@@ -88,10 +87,8 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
 
   const handleCall = async (phoneNumber: string) => {
     try {
-      // Clean the phone number by removing all non-digit characters
       const cleanedNumber = phoneNumber.replace(/\D/g, "")
       const phoneUrl = `tel:${cleanedNumber}`
-
       await Linking.openURL(phoneUrl)
     } catch (error) {
       Alert.alert("Error", "Failed to make call. Please try again.")
@@ -112,7 +109,7 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
 
       const result = await Share.share(shareContent, {
         dialogTitle: "Share Ride Details",
-        subject: "Ride Information", // For email sharing
+        subject: "Ride Information",
       })
 
       if (result.action === Share.sharedAction) {
@@ -134,60 +131,100 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
       {data.map((ride, index) => (
         <Pressable
           key={ride._id || index}
-          onPress={() => handlePress(ride)}>
-          <View style={styles.container}>
-            {ride.customerPhoto === "pending" ? (
-              <SkeletonBox
-                width={100}
-                height={100}
-                borderRadius={12}
-                style={styles.imageSkeleton}
-              />
-            ) : (
-              <Image
-                source={{ uri: ride?.customerPhoto }}
-                style={styles.image}
-                resizeMode='contain'
-              />
-            )}
-            <View style={styles.mainContainer}>
-              <View>
-                <Text style={styles.customerName}>{ride?.customerName}</Text>
-                <View style={styles.customerDataField}>
-                  <View style={styles.dataField}>
-                    <Number
-                      height={20}
-                      width={20}
-                    />
-                    <Text style={styles.dataFieldText}>{ride.roomNumber}</Text>
-                  </View>
+          onPress={() => handlePress(ride)}
+          style={({ pressed }) => [
+            styles.container,
+            pressed && styles.containerPressed,
+          ]}>
+          <View style={styles.cardContent}>
+            {/* Left side - Image */}
+            <View style={styles.imageContainer}>
+              {ride.customerPhoto === "pending" ? (
+                <SkeletonBox
+                  width={80}
+                  height={80}
+                  borderRadius={40}
+                  style={styles.imageSkeleton}
+                />
+              ) : (
+                <Image
+                  source={{ uri: ride?.customerPhoto }}
+                  style={styles.customerImage}
+                />
+              )}
+            </View>
 
-                  <View style={styles.dataField}>
-                    <Phone
-                      height={20}
-                      width={20}
+            {/* Right side - Content */}
+            <View style={styles.contentSection}>
+              {/* Header with name and actions */}
+              <View style={styles.headerRow}>
+                <View style={styles.nameSection}>
+                  <Text
+                    style={styles.customerName}
+                    numberOfLines={1}>
+                    {ride?.customerName}
+                  </Text>
+                </View>
+
+                <View style={styles.quickActions}>
+                  <Pressable
+                    style={[styles.actionButton, styles.callButton]}
+                    onPress={() => handleCall(ride.phoneNumber)}>
+                    <Call
+                      height={16}
+                      width={16}
+                      color='#fff'
                     />
-                    <Text style={styles.dataFieldText}>{ride.phoneNumber}</Text>
-                  </View>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.actionButton, styles.shareButton]}
+                    onPress={() => handleShare(ride)}>
+                    <ShareImg
+                      height={16}
+                      width={16}
+                      color='#6366f1'
+                    />
+                  </Pressable>
                 </View>
               </View>
-              <View style={styles.actionButtons}>
-                <Pressable onPress={() => handleDelete(ride._id)}>
+
+              {/* Details section */}
+              <View style={styles.detailsSection}>
+                <View style={styles.detailItem}>
+                  <View style={styles.iconWrapper}>
+                    <Number
+                      height={14}
+                      width={14}
+                      color='#6b7280'
+                    />
+                  </View>
+                  <Text style={styles.detailText}>Room {ride.roomNumber}</Text>
+                </View>
+
+                <View style={styles.detailItem}>
+                  <View style={styles.iconWrapper}>
+                    <Phone
+                      height={14}
+                      width={14}
+                      color='#6b7280'
+                    />
+                  </View>
+                  <Text style={styles.detailText}>{ride.phoneNumber}</Text>
+                </View>
+              </View>
+
+              {/* Footer with delete action */}
+              <View style={styles.footerRow}>
+                <Text style={styles.vehicleText}>
+                  {ride.vehicleNumber || "No vehicle info"}
+                </Text>
+                <Pressable
+                  style={styles.deleteButton}
+                  onPress={() => handleDelete(ride._id)}>
                   <Delete
-                    height={24}
-                    width={24}
-                  />
-                </Pressable>
-                <Pressable onPress={() => handleShare(ride)}>
-                  <ShareImg
-                    height={24}
-                    width={24}
-                  />
-                </Pressable>
-                <Pressable onPress={() => handleCall(ride.phoneNumber)}>
-                  <Call
-                    height={24}
-                    width={24}
+                    height={16}
+                    width={16}
+                    color='#ef4444'
                   />
                 </Pressable>
               </View>
@@ -201,57 +238,113 @@ const RidesCard = ({ data, onDeleteSuccess }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 30,
-    paddingVertical: 18,
-    width: "100%",
-    flexDirection: "row",
-    gap: 20,
-    justifyContent: "space-between",
     backgroundColor: Colors.white,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: Colors.grayStatus,
+    borderRadius: 16,
     marginBottom: 12,
+    borderWidth: 0.5,
+    borderColor: Colors.lightGray,
   },
-  mainContainer: {
-    flex: 1,
-    flexDirection: "column",
-    gap: 10,
+  containerPressed: {
+    transform: [{ scale: 0.98 }],
+    opacity: 0.9,
+  },
+  cardContent: {
+    flexDirection: "row",
+    padding: 16,
+    gap: 16,
+  },
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  customerImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#f3f4f6",
   },
   imageSkeleton: {
     alignSelf: "center",
   },
-  image: {
-    height: 100,
-    width: 100,
-    borderRadius: 12,
-    alignSelf: "center",
+  contentSection: {
+    flex: 1,
+    gap: 12,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  nameSection: {
+    flex: 1,
+    gap: 6,
   },
   customerName: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#111827",
     fontFamily: "poppins-semibold",
-    fontSize: 16,
-    color: Colors.black,
   },
-  customerDataField: {
-    padding: 4,
+  quickActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
     justifyContent: "center",
   },
-  dataField: {
-    gap: 10,
+  callButton: {
+    backgroundColor: "#22c55e",
+  },
+  shareButton: {
+    backgroundColor: "#e0e7ff",
+  },
+  detailsSection: {
+    gap: 8,
+  },
+  detailItem: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 10,
   },
-  dataFieldText: {
-    fontFamily: "poppins-medium",
+  iconWrapper: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#f3f4f6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  detailText: {
     fontSize: 14,
-    textAlign: "center",
-    color: Colors.grayText,
+    color: "#374151",
+    fontFamily: "poppins-medium",
+    flex: 1,
   },
-  actionButtons: {
+  footerRow: {
     flexDirection: "row",
-    width: "100%",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    alignItems: "center",
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#f3f4f6",
+  },
+  vehicleText: {
+    fontSize: 13,
+    color: "#6b7280",
+    fontFamily: "poppins-regular",
+    fontStyle: "italic",
+  },
+  deleteButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#fef2f2",
+    alignItems: "center",
+    justifyContent: "center",
   },
 })
 

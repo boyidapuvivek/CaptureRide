@@ -166,7 +166,10 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <Header title={"Profile"} />
+      <Header
+        title={"Profile"}
+        showProfile={false}
+      />
       <View style={styles.mainContainer}>
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>

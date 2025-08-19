@@ -226,10 +226,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: Colors.white,
     borderRadius: 18,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
-    borderRightColor: "#00000026",
-    borderBottomColor: "#00000026",
+    borderWidth:1,
+    borderColor:Colors.borderColor
   },
   imageContainer: {
     width: "100%",

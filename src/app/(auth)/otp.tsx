@@ -14,6 +14,7 @@ const Otp = () => {
   const handlePress = () => {
     router.push("/(auth)/resetpassword")
   }
+
   return (
     <View style={styles.container}>
       <Pressable

@@ -72,42 +72,39 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     flexDirection: "row",
-    gap: 10,
     alignItems: "center",
     width: "100%",
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     backgroundColor: Colors.white,
-    borderRadius: 18,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
-    borderRightColor: "#00000026",
-    borderBottomColor: "#00000026",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    gap: 10,
   },
 
   inputContainerError: {
-    borderRightColor: "#ff4444",
-    borderBottomColor: "#ff4444",
+    borderColor: "#ff4d4d",
   },
 
   textInput: {
     flex: 1,
     fontFamily: "poppins-regular",
-    fontSize: 16,
+    fontSize: 18,
+    height: 45,
     color: Colors.black,
-    height: 40,
   },
 
   eyeIconContainer: {
-    padding: 4,
+    paddingHorizontal: 6,
   },
 
   errorText: {
-    color: "#ff4444",
+    color: "#ff4d4d",
     fontSize: 12,
     fontFamily: "poppins-regular",
-    marginTop: 4,
-    marginLeft: 12,
+    marginTop: 6,
+    marginLeft: 4,
   },
 })
 

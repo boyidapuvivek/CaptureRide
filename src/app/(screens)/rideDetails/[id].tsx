@@ -8,18 +8,22 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  Linking,
+  Alert,
 } from "react-native"
 import { useState } from "react"
 import { Ionicons } from "@expo/vector-icons"
 import Colors from "../../../constants/Colors"
 import Header from "../../../components/Header"
 import { Values } from "../../../constants/Values"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const { width, height } = Dimensions.get("window")
 
 export default function RideDetails() {
   const { data } = useLocalSearchParams()
   const ride = JSON.parse(data as string)
+  const insets = useSafeAreaInsets()
 
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedImage, setSelectedImage] = useState("")
@@ -34,126 +38,159 @@ export default function RideDetails() {
     setSelectedImage("")
   }
 
+  const handlePhoneCall = () => {
+    const phoneNumber = ride.phoneNumber
+    if (phoneNumber) {
+      Linking.openURL(`tel:${phoneNumber}`)
+    } else {
+      Alert.alert("Error", "Phone number not available")
+    }
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <View style={styles.header}>
-        <Header title={"Ride Details"} />
+        <Header title='Ride Details' />
       </View>
-      <ScrollView contentContainerStyle={styles.mainContainer}>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
-          <View style={styles.profileImageContainer}>
-            <TouchableOpacity
-              onPress={() => openImageModal(ride.customerPhoto)}>
-              <Image
-                source={{ uri: ride.customerPhoto }}
-                style={styles.profileImage}
-                resizeMode='contain'
+          <TouchableOpacity
+            style={styles.profileImageContainer}
+            onPress={() => openImageModal(ride.customerPhoto)}
+            activeOpacity={0.8}>
+            <Image
+              source={{ uri: ride.customerPhoto }}
+              style={styles.profileImage}
+              resizeMode='cover'
+            />
+            <View style={styles.profileImageOverlay}>
+              <Ionicons
+                name='expand-outline'
+                size={20}
+                color={Colors.white}
               />
-              <View style={styles.profileImageOverlay}>
+            </View>
+          </TouchableOpacity>
+
+          <Text style={styles.customerName}>{ride.customerName}</Text>
+          <View style={styles.roomBadge}>
+            <Text style={styles.roomText}>Room {ride.roomNumber}</Text>
+          </View>
+        </View>
+
+        {/* Info Cards Container */}
+        <View style={styles.cardsContainer}>
+          {/* Contact Info Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
                 <Ionicons
-                  name='expand-outline'
-                  size={24}
-                  color={Colors.white}
+                  name='person-outline'
+                  size={20}
+                  color={Colors.primary}
                 />
               </View>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.name}>{ride.customerName}</Text>
-          <Text style={styles.roomNumber}>Room {ride.roomNumber}</Text>
-        </View>
-
-        {/* Details Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Ionicons
-              name='information-circle-outline'
-              size={24}
-              color={Colors.primary}
-            />
-            <Text style={styles.cardTitle}>Customer Information</Text>
-          </View>
-
-          <View style={styles.detailItem}>
-            <View style={styles.detailIcon}>
-              <Ionicons
-                name='call-outline'
-                size={20}
-                color={Colors.primary}
-              />
+              <Text style={styles.cardTitle}>Customer Details</Text>
             </View>
-            <View style={styles.detailTextContainer}>
-              <Text style={styles.detailLabel}>Phone Number</Text>
-              <Text style={styles.detailValue}>{ride.phoneNumber}</Text>
-            </View>
-          </View>
-
-          <View style={styles.detailItem}>
-            <View style={styles.detailIcon}>
-              <Ionicons
-                name='car-outline'
-                size={20}
-                color={Colors.primary}
-              />
-            </View>
-            <View style={styles.detailTextContainer}>
-              <Text style={styles.detailLabel}>Vehicle Number</Text>
-              <Text style={styles.detailValue}>{ride.vehicleNumber}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Documents Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Ionicons
-              name='document-attach-outline'
-              size={24}
-              color={Colors.primary}
-            />
-            <Text style={styles.cardTitle}>Documents</Text>
-          </View>
-
-          <View style={styles.documentsGrid}>
-            <TouchableOpacity
-              style={styles.documentItem}
-              onPress={() => openImageModal(ride.aadharPhoto)}>
-              <View style={styles.documentImageContainer}>
-                <Image
-                  source={{ uri: ride.aadharPhoto }}
-                  style={styles.documentImage}
-                  resizeMode='contain'
-                />
-                <View style={styles.documentOverlay}>
-                  <Ionicons
-                    name='expand-outline'
-                    size={24}
-                    color={Colors.white}
-                  />
-                </View>
-              </View>
-              <Text style={styles.documentLabel}>Aadhar Card</Text>
-            </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.documentItem}
-              onPress={() => openImageModal(ride.dlPhoto)}>
-              <View style={styles.documentImageContainer}>
-                <Image
-                  source={{ uri: ride.dlPhoto }}
-                  style={styles.documentImage}
-                  resizeMode='contain'
+              style={styles.contactItem}
+              onPress={handlePhoneCall}
+              activeOpacity={0.7}>
+              <View style={styles.contactIconContainer}>
+                <Ionicons
+                  name='call'
+                  size={18}
+                  color={Colors.primary}
                 />
-                <View style={styles.documentOverlay}>
-                  <Ionicons
-                    name='expand-outline'
-                    size={24}
-                    color={Colors.white}
-                  />
-                </View>
               </View>
-              <Text style={styles.documentLabel}>Driving License</Text>
+              <View style={styles.contactTextContainer}>
+                <Text style={styles.contactLabel}>Phone Number</Text>
+                <Text style={styles.contactValue}>{ride.phoneNumber}</Text>
+              </View>
+              <Ionicons
+                name='chevron-forward'
+                size={18}
+                color={Colors.gray}
+              />
             </TouchableOpacity>
+
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <Ionicons
+                  name='car'
+                  size={18}
+                  color={Colors.primary}
+                />
+              </View>
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoLabel}>Vehicle Number</Text>
+                <Text style={styles.infoValue}>{ride.vehicleNumber}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Documents Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
+                <Ionicons
+                  name='document-text-outline'
+                  size={20}
+                  color={Colors.primary}
+                />
+              </View>
+              <Text style={styles.cardTitle}>Documents</Text>
+            </View>
+
+            <View style={styles.documentsGrid}>
+              <TouchableOpacity
+                style={styles.documentCard}
+                onPress={() => openImageModal(ride.aadharPhoto)}
+                activeOpacity={0.8}>
+                <View style={styles.documentImageWrapper}>
+                  <Image
+                    source={{ uri: ride.aadharPhoto }}
+                    style={styles.documentImage}
+                    resizeMode='cover'
+                  />
+                  <View style={styles.documentOverlay}>
+                    <Ionicons
+                      name='expand-outline'
+                      size={16}
+                      color={Colors.white}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.documentTitle}>Aadhar Card</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.documentCard}
+                onPress={() => openImageModal(ride.dlPhoto)}
+                activeOpacity={0.8}>
+                <View style={styles.documentImageWrapper}>
+                  <Image
+                    source={{ uri: ride.dlPhoto }}
+                    style={styles.documentImage}
+                    resizeMode='cover'
+                  />
+                  <View style={styles.documentOverlay}>
+                    <Ionicons
+                      name='expand-outline'
+                      size={16}
+                      color={Colors.white}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.documentTitle}>Driving License</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -163,7 +200,8 @@ export default function RideDetails() {
         visible={modalVisible}
         transparent={true}
         animationType='fade'
-        onRequestClose={closeModal}>
+        onRequestClose={closeModal}
+        statusBarTranslucent>
         <View style={styles.modalContainer}>
           <TouchableOpacity
             style={styles.modalBackground}
@@ -172,10 +210,11 @@ export default function RideDetails() {
             <View style={styles.modalContent}>
               <TouchableOpacity
                 style={styles.closeButton}
-                onPress={closeModal}>
+                onPress={closeModal}
+                activeOpacity={0.8}>
                 <Ionicons
                   name='close'
-                  size={30}
+                  size={24}
                   color={Colors.white}
                 />
               </TouchableOpacity>
@@ -196,42 +235,39 @@ export default function RideDetails() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.white,
   },
   header: {
     backgroundColor: Colors.background,
     paddingTop: Values.paddingTop,
     paddingHorizontal: Values.paddingHorizontal,
   },
-  mainContainer: {
-    flexGrow: 1,
-    paddingBottom: 30,
+  scrollView: {
+    flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+
   // Profile Section
   profileSection: {
-    alignItems: "center",
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    marginBottom: 20,
     backgroundColor: Colors.white,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    alignItems: "center",
+    paddingVertical: 32,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 16,
   },
   profileImageContainer: {
     position: "relative",
     marginBottom: 16,
   },
   profileImage: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    borderWidth: 4,
-    borderColor: Colors.primary,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: Colors.lightGray,
   },
   profileImageOverlay: {
     position: "absolute",
@@ -239,38 +275,46 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderRadius: 70,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    borderRadius: 50,
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
-    opacity: 0,
+    opacity: 0.8,
   },
-  name: {
-    fontFamily: "poppins-bold",
-    fontSize: 24,
-    color: Colors.dark,
-    marginBottom: 4,
+  customerName: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: Colors.darkText,
+    marginBottom: 8,
     textAlign: "center",
   },
-  roomNumber: {
-    fontFamily: "poppins-medium",
-    fontSize: 16,
-    color: Colors.grayText,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+  roomBadge: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  // Cards
+  roomText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: Colors.white,
+  },
+
+  // Cards Container
+  cardsContainer: {
+    paddingHorizontal: 16,
+    gap: 16,
+  },
+
+  // Card Styles
   card: {
     backgroundColor: Colors.white,
     borderRadius: 16,
     padding: 20,
-    marginHorizontal: 16,
-    marginBottom: 20,
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
     elevation: 3,
   },
   cardHeader: {
@@ -279,59 +323,102 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGray,
+    borderBottomColor: "#F3F4F6",
   },
-  cardTitle: {
-    fontFamily: "poppins-semibold",
-    fontSize: 18,
-    color: Colors.dark,
-    marginLeft: 8,
-  },
-  // Detail Items
-  detailItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  detailIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  cardIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     backgroundColor: Colors.transparent,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
   },
-  detailTextContainer: {
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.darkText,
+  },
+
+  // Contact Item (Clickable)
+  contactItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    marginBottom: 12,
+    borderRadius: 12,
+    backgroundColor: "#F8FAFF",
+  },
+  contactIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.white,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 12,
+    marginRight: 12,
+  },
+  contactTextContainer: {
     flex: 1,
   },
-  detailLabel: {
-    fontFamily: "poppins-regular",
-    fontSize: 14,
+  contactLabel: {
+    fontSize: 12,
     color: Colors.grayText,
     marginBottom: 2,
   },
-  detailValue: {
-    fontFamily: "poppins-medium",
-    fontSize: 16,
-    color: Colors.dark,
+  contactValue: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: Colors.darkText,
   },
-  // Documents
+
+  // Info Item (Non-clickable)
+  infoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  infoIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.transparent,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  infoTextContainer: {
+    flex: 1,
+  },
+  infoLabel: {
+    fontSize: 12,
+    color: Colors.grayText,
+    marginBottom: 2,
+  },
+  infoValue: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: Colors.darkText,
+  },
+
+  // Documents Grid
   documentsGrid: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+    gap: 12,
   },
-  documentItem: {
-    width: "48%",
-    marginBottom: 16,
+  documentCard: {
+    flex: 1,
+    alignItems: "center",
   },
-  documentImageContainer: {
+  documentImageWrapper: {
     position: "relative",
+    width: "100%",
+    aspectRatio: 1.4,
     borderRadius: 12,
     overflow: "hidden",
-    aspectRatio: 1,
     marginBottom: 8,
+    backgroundColor: Colors.lightGray,
   },
   documentImage: {
     width: "100%",
@@ -339,53 +426,53 @@ const styles = StyleSheet.create({
   },
   documentOverlay: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    top: 8,
+    right: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
   },
-  documentLabel: {
-    fontFamily: "poppins-medium",
-    fontSize: 14,
-    color: Colors.dark,
+  documentTitle: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: Colors.darkText,
     textAlign: "center",
   },
-  // Modal
+
+  // Modal Styles
   modalContainer: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.9)",
-    justifyContent: "center",
-    alignItems: "center",
   },
   modalBackground: {
     flex: 1,
-    width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    padding: 20,
   },
   modalContent: {
-    width: "90%",
+    width: "100%",
     height: "80%",
     position: "relative",
   },
   closeButton: {
     position: "absolute",
     top: -50,
-    right: 0,
+    right: 10,
     zIndex: 1,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 20,
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   fullImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
+    borderRadius: 12,
   },
 })

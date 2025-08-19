@@ -1,19 +1,22 @@
 import React from "react"
 import {
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
 } from "react-native"
 import Colors from "../constants/Colors"
-
-// Import SVG icons directly
 import AddRideIcon from "../assets/icons/addride.svg"
 import AllRidesIcon from "../assets/icons/allrides.svg"
 import AddBikeIcon from "../assets/icons/addbike.svg"
 import QrIcon from "../assets/icons/myqr.svg"
 import { useRouter } from "expo-router"
+
+const { width } = Dimensions.get("window")
+
+const CARD_SPACING = 12
+const CARD_WIDTH = width / 2.5 // 2 per row
 
 const CardsData = [
   {
@@ -48,23 +51,23 @@ const CardContainer = () => {
   return (
     <View style={styles.cardContainer}>
       {CardsData.map((item, index) => {
+        const IconSize = width < 380 ? 60 : 80 // smaller phones vs larger
         return (
           <TouchableOpacity
             style={[styles.card, { backgroundColor: item.color }]}
             key={index}
-            onPress={() => {
-              router.push(item.route)
-            }}
-            activeOpacity={0.98}>
+            onPress={() => router.push(item.route)}
+            activeOpacity={0.9}>
             <Text
-              style={styles.cardText}
-              numberOfLines={2}
-              ellipsizeMode='clip'>
+              style={[
+                styles.cardText,
+                { fontSize: width < 380 ? 14 : 16 }, // responsive font
+              ]}>
               {item.title}
             </Text>
             <item.Icon
-              height={90}
-              width={90}
+              height={IconSize}
+              width={IconSize}
             />
           </TouchableOpacity>
         )
@@ -75,22 +78,22 @@ const CardContainer = () => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    flexWrap: "wrap",
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 10,
+    paddingHorizontal: CARD_SPACING,
   },
   card: {
+    flexBasis: CARD_WIDTH,
+    borderRadius: 16,
+    padding: 12,
+    marginBottom: CARD_SPACING,
     flexDirection: "row",
-    width: "48%",
-    borderRadius: 18,
-    padding: 10,
-    overflow: "hidden",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   cardText: {
     color: Colors.white,
-    fontSize: 16,
     fontFamily: "poppins-semibold",
     flexShrink: 1,
   },

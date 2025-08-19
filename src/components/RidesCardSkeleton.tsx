@@ -1,86 +1,95 @@
 import React from "react"
-import { StyleSheet, View, Pressable } from "react-native"
+import { StyleSheet, View } from "react-native"
 import Colors from "../constants/Colors"
-import Delete from "../assets/icons/allRides/delete.svg"
-import Share from "../assets/icons/allRides/share.svg"
-import Call from "../assets/icons/allRides/call.svg"
-import SkeletonBox from "../utils/SkeletonBox" // Import the separate component
+import SkeletonBox from "../utils/SkeletonBox"
 
 const RidesCardSkeleton = () => {
   return (
     <View style={styles.container}>
-      {/* Image skeleton */}
-      <SkeletonBox
-        width={100}
-        height={100}
-        borderRadius={12}
-        style={styles.image}
-      />
-
-      <View style={styles.mainContainer}>
-        <View>
-          {/* Customer name skeleton */}
+      <View style={styles.cardContent}>
+        {/* Left side - Image skeleton */}
+        <View style={styles.imageContainer}>
           <SkeletonBox
-            width={120}
-            height={20}
-            borderRadius={4}
-            style={styles.customerNameSkeleton}
+            width={80}
+            height={80}
+            borderRadius={40}
+            style={styles.imageSkeleton}
           />
+        </View>
 
-          <View style={styles.customerDataField}>
-            {/* Room number field skeleton */}
-            <View style={styles.dataField}>
+        {/* Right side - Content skeleton */}
+        <View style={styles.contentSection}>
+          {/* Header row skeleton */}
+          <View style={styles.headerRow}>
+            <View style={styles.nameSection}>
+              {/* Customer name skeleton */}
               <SkeletonBox
-                width={20}
-                height={20}
-                borderRadius={10}
+                width={100}
+                height={22}
+                borderRadius={6}
+                style={styles.customerNameSkeleton}
+              />
+            </View>
+
+            {/* Quick actions skeleton */}
+            <View style={styles.quickActions}>
+              <SkeletonBox
+                width={32}
+                height={32}
+                borderRadius={16}
               />
               <SkeletonBox
-                width={40}
+                width={32}
+                height={32}
+                borderRadius={16}
+              />
+            </View>
+          </View>
+
+          {/* Details section skeleton */}
+          <View style={styles.detailsSection}>
+            {/* Room number field skeleton */}
+            <View style={styles.detailItem}>
+              <SkeletonBox
+                width={24}
+                height={24}
+                borderRadius={12}
+              />
+              <SkeletonBox
+                width={80}
                 height={16}
                 borderRadius={4}
               />
             </View>
 
             {/* Phone number field skeleton */}
-            <View style={styles.dataField}>
+            <View style={styles.detailItem}>
               <SkeletonBox
-                width={20}
-                height={20}
-                borderRadius={10}
+                width={24}
+                height={24}
+                borderRadius={12}
               />
               <SkeletonBox
-                width={100}
+                width={120}
                 height={16}
                 borderRadius={4}
               />
             </View>
           </View>
-        </View>
 
-        {/* Action buttons - keeping them visible but you could skeleton these too */}
-        <View style={styles.actionButtons}>
-          <Pressable disabled>
-            <Delete
-              height={24}
-              width={24}
-              style={{ opacity: 0.6 }}
+          {/* Footer row skeleton */}
+          <View style={styles.footerRow}>
+            <SkeletonBox
+              width={100}
+              height={14}
+              borderRadius={4}
             />
-          </Pressable>
-          <Pressable disabled>
-            <Share
-              height={24}
-              width={24}
-              style={{ opacity: 0.6 }}
+            <SkeletonBox
+              width={32}
+              height={32}
+              borderRadius={16}
             />
-          </Pressable>
-          <Pressable disabled>
-            <Call
-              height={24}
-              width={24}
-              style={{ opacity: 0.6 }}
-            />
-          </Pressable>
+          </View>
         </View>
       </View>
     </View>
@@ -89,46 +98,66 @@ const RidesCardSkeleton = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 30,
-    paddingVertical: 18,
-    width: "100%",
-    flexDirection: "row",
-    gap: 20,
-    justifyContent: "space-between",
-    backgroundColor: Colors.white,
-    borderRadius: 18,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
-    borderRightColor: "#00000026",
-    borderBottomColor: "#00000026",
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
     marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  mainContainer: {
-    flex: 1,
-    flexDirection: "column",
-    gap: 10,
+  cardContent: {
+    flexDirection: "row",
+    padding: 16,
+    gap: 16,
   },
-  image: {
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  imageSkeleton: {
     alignSelf: "center",
   },
-  customerNameSkeleton: {
-    marginBottom: 8,
+  contentSection: {
+    flex: 1,
+    gap: 12,
   },
-  customerDataField: {
-    padding: 4,
-    justifyContent: "center",
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  nameSection: {
+    flex: 1,
+    gap: 6,
+  },
+  customerNameSkeleton: {
+    marginBottom: 2,
+  },
+
+  quickActions: {
+    flexDirection: "row",
     gap: 8,
   },
-  dataField: {
-    gap: 10,
+  detailsSection: {
+    gap: 8,
+  },
+  detailItem: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 10,
   },
-  actionButtons: {
+  footerRow: {
     flexDirection: "row",
-    width: "100%",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    alignItems: "center",
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#f3f4f6",
   },
 })
 

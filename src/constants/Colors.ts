@@ -7,7 +7,7 @@ const Colors = {
   white: "#FFFFFF",
   black: "#000000",
   background: "#FFFFFF",
-  
+  borderColor:"#E0E0E0",
   
   primaryText: "#2A4ECA",
   grayText:"#7C8BA0",

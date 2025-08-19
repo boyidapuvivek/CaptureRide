@@ -1,4 +1,4 @@
 export const Values = {
     paddingHorizontal : 22,
-    paddingTop : 50,
+    paddingTop : 35,
 }

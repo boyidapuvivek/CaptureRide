@@ -115,26 +115,21 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 const styles = StyleSheet.create({
   dropdown: {
     flexDirection: "row",
-    gap: 10,
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
-    paddingHorizontal: 12,
-    paddingVertical: 18,
-
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     backgroundColor: Colors.white,
-    borderRadius: 18,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
-    borderRightColor: "#00000026",
-    borderBottomColor: "#00000026",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderColor,
   } as ViewStyle,
 
   dropdownText: {
     fontFamily: "poppins-regular",
     color: Colors.black,
-    height: "auto",
-    fontSize: 16,
+    fontSize: 18,
   } as TextStyle,
 
   placeholder: {
@@ -142,27 +137,29 @@ const styles = StyleSheet.create({
   } as TextStyle,
 
   downIcon: {
-    transform: [{ scaleY: -1 }],
+    transform: [{ rotate: "0deg" }],
   },
 
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     padding: 20,
   } as ViewStyle,
 
   modal: {
     backgroundColor: "#fff",
-    borderRadius: 18,
-    maxHeight: 300,
+    borderRadius: 12,
+    maxHeight: 280,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
   } as ViewStyle,
 
   item: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderBottomColor: "#f2f2f2",
   } as ViewStyle,
 
   selectedItem: {
@@ -170,13 +167,14 @@ const styles = StyleSheet.create({
   } as ViewStyle,
 
   itemText: {
-    fontSize: 16,
+    fontSize: 15,
     color: "#333",
+    fontFamily: "poppins-regular",
   } as TextStyle,
 
   selectedItemText: {
     color: "#007AFF",
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
   } as TextStyle,
 
   emptyContainer: {
@@ -186,7 +184,7 @@ const styles = StyleSheet.create({
   } as ViewStyle,
 
   emptyText: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.grayText || "#999",
     fontStyle: "italic",
   } as TextStyle,

@@ -1,43 +1,46 @@
-import React from "react";
-import { TouchableOpacity, StyleSheet, Text, View } from "react-native";
-import BackArrow from "../assets/icons/back.svg";
-import Profile from "../assets/icons/profile.svg";
-import { useRouter } from "expo-router";
-import Colors from "../constants/Colors";
+import React from "react"
+import { TouchableOpacity, StyleSheet, Text, View } from "react-native"
+import BackArrow from "../assets/icons/back.svg"
+import Profile from "../assets/icons/profile.svg"
+import { useRouter } from "expo-router"
+import Colors from "../constants/Colors"
 
 type Props = {
-  title: String;
-};
+  title: String
+  showProfile: boolean
+}
 
-const Header = ({ title }: Props) => {
-  const router = useRouter();
+const Header = ({ title, showProfile = true }: Props) => {
+  const router = useRouter()
   return (
     <View style={styles.container}>
       <View style={styles.left}>
         <TouchableOpacity
           onPress={() => {
-            router.back();
+            router.back()
           }}>
           <BackArrow
-            height={24}
-            width={24}
+            height={30}
+            width={30}
           />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>
       </View>
 
-      <TouchableOpacity
-        onPress={() => {
-          router.push("/(screens)/profile");
-        }}>
-        <Profile
-          height={24}
-          width={24}
-        />
-      </TouchableOpacity>
+      {showProfile && (
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/(screens)/profile")
+          }}>
+          <Profile
+            height={24}
+            width={24}
+          />
+        </TouchableOpacity>
+      )}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -56,6 +59,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.darkText,
   },
-});
+})
 
-export default Header;
+export default Header

@@ -22,6 +22,7 @@ import useFetchToken from "../utils/useFetchToken"
 import Number from "../assets/icons/roomNum.svg"
 import Phone from "../assets/icons/phone.svg"
 import SkeletonBox from "../utils/SkeletonBox"
+import { FontAwesome, Ionicons } from "@expo/vector-icons"
 
 const RecentRides = () => {
   const [data, setData] = useState<[]>([])
@@ -32,6 +33,9 @@ const RecentRides = () => {
 
   const handleViewAll = () => {
     router.push("/(main)/allRides")
+  }
+  const handleAdd = () => {
+    router.push("/(main)/addRide")
   }
 
   const fetchData = async (token: string) => {
@@ -47,10 +51,7 @@ const RecentRides = () => {
         },
       })
       setData(res?.data?.rides)
-
-      setTimeout(() => {
-        setLoading(false)
-      }, 2000)
+      setLoading(false)
     } catch (error) {
       Alert.alert("Unable to fetch Rides", "Retry after sometime")
       setLoading(false)
@@ -75,7 +76,7 @@ const RecentRides = () => {
     }, [token])
   )
   //Empty State
-  if (!data.length || data.length === 0) {
+  if (!loading && (!data || data.length === 0)) {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -83,18 +84,34 @@ const RecentRides = () => {
             <View style={styles.bar} />
             <Text style={styles.sectionTitle}>Recent Rides</Text>
           </View>
-          <TouchableOpacity
-            style={styles.viewAllButton}
-            onPress={handleViewAll}>
-            <Text style={styles.viewAllText}>View All</Text>
-          </TouchableOpacity>
         </View>
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No data available</Text>
+
+        <View style={styles.emptyStateWrapper}>
+          <Ionicons
+            name='bicycle-outline'
+            size={80}
+            color={Colors.grayText}
+          />
+          <Text style={styles.emptyTitle}>No Rides Yet</Text>
+          <Text style={styles.emptySubtitle}>
+            Start by adding your first ride to see it here.
+          </Text>
+
+          <TouchableOpacity
+            style={styles.addRideButton}
+            onPress={handleViewAll}>
+            <FontAwesome
+              name='plus'
+              size={22}
+              color={Colors.white}
+            />
+            <Text style={styles.addRideButtonText}> Add Ride</Text>
+          </TouchableOpacity>
         </View>
       </View>
     )
   }
+
   //Skleton Container
   if (loading) {
     return (
@@ -168,12 +185,14 @@ const RecentRides = () => {
         </View>
         <TouchableOpacity
           style={styles.viewAllButton}
-          onPress={handleViewAll}>
+          onPress={handleAdd}>
           <Text style={styles.viewAllText}>View All</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView horizontal>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}>
         {data?.map((ride, index) => (
           <Pressable
             key={index}
@@ -239,13 +258,14 @@ const styles = StyleSheet.create({
     color: Colors.primaryText,
   },
   viewAllButton: {
-    paddingVertical: 5,
+    height: 35,
     paddingHorizontal: 10,
     backgroundColor: Colors.transparent,
     borderRadius: 18,
+    alignItems: "center",
   },
   viewAllText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: "poppins-medium",
     color: Colors.primary,
   },
@@ -283,16 +303,47 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  emptyContainer: {
-    height: 100,
+  emptyStateWrapper: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
-  emptyText: {
-    fontFamily: "poppins-medium",
-    fontSize: 18,
+  emptyTitle: {
+    fontSize: 20,
+    fontFamily: "poppins-semibold",
     color: Colors.primaryText,
+    marginTop: 15,
   },
+  emptySubtitle: {
+    fontSize: 14,
+    fontFamily: "poppins-medium",
+    color: Colors.grayText,
+    textAlign: "center",
+    marginTop: 6,
+    marginBottom: 20,
+  },
+  addRideButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 25,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  addRideButtonText: {
+    fontSize: 16,
+    fontFamily: "poppins-semibold",
+    color: Colors.white,
+  },
+
   skeletonTextContainer: {
     height: 100,
     gap: 10,

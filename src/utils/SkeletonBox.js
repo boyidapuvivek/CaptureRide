@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from "react";
-import { Animated } from "react-native";
+import React, { useEffect, useRef } from "react"
+import { Animated } from "react-native"
 
-const SkeletonBox = ({ 
-  width, 
-  height, 
-  borderRadius = 4, 
+const SkeletonBox = ({
+  width,
+  height,
+  borderRadius = 4,
   style = {},
   backgroundColor = "#E1E9EE",
   minOpacity = 0.3,
   maxOpacity = 0.7,
-  duration = 800
+  duration = 800,
 }) => {
-  const opacity = useRef(new Animated.Value(minOpacity)).current;
+  const opacity = useRef(new Animated.Value(minOpacity)).current
 
   useEffect(() => {
     const animate = () => {
@@ -26,15 +26,15 @@ const SkeletonBox = ({
           duration: duration,
           useNativeDriver: true,
         }),
-      ]).start(() => animate());
-    };
-    animate();
+      ]).start(() => animate())
+    }
+    animate()
 
     // Cleanup function to stop animation when component unmounts
     return () => {
-      opacity.stopAnimation();
-    };
-  }, [opacity, minOpacity, maxOpacity, duration]);
+      opacity.stopAnimation()
+    }
+  }, [opacity, minOpacity, maxOpacity, duration])
 
   return (
     <Animated.View
@@ -49,7 +49,7 @@ const SkeletonBox = ({
         style,
       ]}
     />
-  );
-};
+  )
+}
 
-export default SkeletonBox;
+export default SkeletonBox
