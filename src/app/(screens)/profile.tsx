@@ -94,12 +94,10 @@ const Profile = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       )
-
       if (res.status !== 200) throw new Error("Failed user logout!!")
 
       await logout("user logged out")
       router.replace("/(auth)/login")
-      AuthProvider().userUpdate(null)
     } catch (error) {
       Alert.alert("Error", "Failed user logout!!")
     }

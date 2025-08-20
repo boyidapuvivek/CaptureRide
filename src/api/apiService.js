@@ -1,9 +1,8 @@
 import axios from "axios"
 
 const API_CONFIG = {
-  BASE_URL: "http://192.168.1.100:5000/api/v1",
-  // BASE_URL: "https://captureridebackend.onrender.com/api/v1",
-  TIMEOUT: 10000,
+  BASE_URL: "https://captureridebackend.onrender.com/api/v1",
+  TIMEOUT: 20000,
 }
 
 // Create axios instance with base configuration
