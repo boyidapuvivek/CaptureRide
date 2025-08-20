@@ -271,8 +271,6 @@ const styles = StyleSheet.create({
   },
 
   cardContainer: {
-    backgroundColor: Colors.transparent,
-    borderRadius: 18,
     justifyContent: "flex-stat",
     alignItems: "center",
     flexDirection: "row",
@@ -280,10 +278,14 @@ const styles = StyleSheet.create({
     padding: 20,
     marginRight: 10,
     minWidth: 260,
+    borderWidth: 1,
+    borderRadius: 18,
+    borderColor: Colors.borderColor,
   },
   customerImage: {
     height: 100,
     width: 100,
+    borderRadius: 18,
   },
   textContainer: {
     height: 100,
