@@ -28,7 +28,6 @@ const AddRide = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [bikes, setBikes] = useState([])
   const [bikeOptions, setBikeOptions] = useState([])
-  const accessToken = getAccessToken()
   const token = useFetchToken()
 
   useFocusEffect(
@@ -69,7 +68,6 @@ const AddRide = () => {
     setAadharPhoto("")
     setDLPhoto("")
     setCustomerPhoto("")
-    Alert.alert("Success", "Ride added successfully")
   }
 
   const handlePress = async () => {
@@ -112,7 +110,7 @@ const AddRide = () => {
 
       const res = await axios.post(apiRoute.ADDRIDE, formData, {
         headers: {
-          Authorization: `Bearer ${accessToken._j}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       })
@@ -129,72 +127,76 @@ const AddRide = () => {
     }
   }
 
-  if (isLoading) return <Loader />
-
   return (
-    <View style={styles.container}>
-      <Header title={"Add Ride"} />
+    <>
+      {isLoading && <Loader />}
+      <View style={styles.container}>
+        <Header title={"Add Ride"} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        nestedScrollEnabled={true}>
-        <View style={styles.mainContainer}>
-          <TextInputField
-            placeholder='Customer Name'
-            value={customerName}
-            onChangeText={setCustomerName}>
-            <User
-              height={20}
-              width={20}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}>
+          <View style={styles.mainContainer}>
+            <TextInputField
+              placeholder='Customer Name'
+              value={customerName}
+              onChangeText={setCustomerName}>
+              <User
+                height={20}
+                width={20}
+              />
+            </TextInputField>
+
+            <TextInputField
+              placeholder='Mobile Number'
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}>
+              <Phone
+                height={25}
+                width={25}
+              />
+            </TextInputField>
+
+            <TextInputField
+              placeholder='Hotel Name and Room Number'
+              value={roomNumber}
+              onChangeText={setRoomNumber}>
+              <RoomNumber
+                height={25}
+                width={25}
+              />
+            </TextInputField>
+
+            <CustomDropdown
+              placeholder='Select Vehicle'
+              data={bikeOptions}
+              onSelect={(item) => setVehicle(item.value)}
+              message={
+                "No Bikes Added \n First Click on Add Bike on Home Screen"
+              }
             />
-          </TextInputField>
 
-          <TextInputField
-            placeholder='Mobile Number'
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}>
-            <Phone
-              height={25}
-              width={25}
+            <UploadPhoto
+              title='Upload Photo'
+              captureImage={setCustomerPhoto}
             />
-          </TextInputField>
-
-          <TextInputField
-            placeholder='Hotel Name and Room Number'
-            value={roomNumber}
-            onChangeText={setRoomNumber}>
-            <RoomNumber
-              height={25}
-              width={25}
+            <UploadPhoto
+              title='Upload Aadhaar'
+              captureImage={setAadharPhoto}
             />
-          </TextInputField>
+            <UploadPhoto
+              title='Upload DL'
+              captureImage={setDLPhoto}
+            />
 
-          <CustomDropdown
-            placeholder='Select Vehicle'
-            data={bikeOptions}
-            onSelect={(item) => setVehicle(item.value)}
-          />
-
-          <UploadPhoto
-            title='Upload Photo'
-            captureImage={setCustomerPhoto}
-          />
-          <UploadPhoto
-            title='Upload Aadhaar'
-            captureImage={setAadharPhoto}
-          />
-          <UploadPhoto
-            title='Upload DL'
-            captureImage={setDLPhoto}
-          />
-
-          <CustomButton
-            title='Upload'
-            onPress={handlePress}
-          />
-        </View>
-      </ScrollView>
-    </View>
+            <CustomButton
+              title='Upload'
+              onPress={handlePress}
+            />
+          </View>
+        </ScrollView>
+      </View>
+    </>
   )
 }
 

@@ -64,6 +64,7 @@ export const storeUserData = async (userData) => {
 export const getAccessToken = async () => {
   try {
     const token = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY)
+
     return token
   } catch (error) {
     Alert.alert("Error getting access token:", error?.message)

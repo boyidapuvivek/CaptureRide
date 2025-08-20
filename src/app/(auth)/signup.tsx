@@ -83,7 +83,7 @@ const SignUpScreen = () => {
     } catch (error: any) {
       Alert.alert(
         "Error",
-        error?.response?.data?.error || error?.message || "Something went wrong"
+        error?.response?.data?.error || "Something went wrong"
       )
     }
   }

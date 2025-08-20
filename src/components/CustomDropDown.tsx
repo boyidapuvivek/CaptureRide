@@ -24,6 +24,7 @@ interface CustomDropdownProps {
   onSelect: (item: DropdownItem) => void
   style?: ViewStyle
   disabled?: boolean
+  message?: String
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -32,6 +33,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   onSelect,
   style,
   disabled = false,
+  message,
 }) => {
   const [isVisible, setIsVisible] = useState(false)
   const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null)
@@ -67,7 +69,11 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
   const renderEmptyComponent = () => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>No data available</Text>
+      {!message ? (
+        <Text style={styles.emptyText}>No data available</Text>
+      ) : (
+        <Text style={styles.emptyText}>{message}</Text>
+      )}
     </View>
   )
 
@@ -184,9 +190,10 @@ const styles = StyleSheet.create({
   } as ViewStyle,
 
   emptyText: {
-    fontSize: 14,
-    color: Colors.grayText || "#999",
-    fontStyle: "italic",
+    fontSize: 20,
+    color: Colors.grayText,
+    fontFamily: "poppins-regular",
+    textAlign: "center",
   } as TextStyle,
 })
 

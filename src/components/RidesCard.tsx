@@ -281,7 +281,6 @@ const styles = StyleSheet.create({
   },
   customerName: {
     fontSize: 18,
-    fontWeight: "600",
     color: "#111827",
     fontFamily: "poppins-semibold",
   },

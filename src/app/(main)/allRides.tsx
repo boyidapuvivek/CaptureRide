@@ -18,9 +18,9 @@ import axios from "axios"
 import RidesCardSkeleton from "../../components/RidesCardSkeleton"
 import { Ionicons } from "@expo/vector-icons"
 import { useRouter } from "expo-router"
+import useFetchToken from "../../utils/useFetchToken"
 
 const AllRides = () => {
-  const [token, setToken] = useState<string | null>(null)
   const [data, setData] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
@@ -29,18 +29,14 @@ const AllRides = () => {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const router = useRouter()
+  const token = useFetchToken()
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const accessToken = await getAccessToken()
-        setToken(accessToken)
-      } catch (error) {
-        setInitialLoading(false)
-      }
+    console.log("Data length:", data.length)
+    if (data.length > 1000) {
+      console.warn("Data array getting very large:", data.length)
     }
-    fetchToken()
-  }, [])
+  }, [data])
 
   const fetchData = async (
     pageNum: number,
@@ -131,12 +127,12 @@ const AllRides = () => {
   }, [])
 
   // Render skeleton loader for initial loading
-  if (initialLoading || (!token && data.length === 0)) {
+  if (initialLoading && token) {
     return (
       <View style={styles.container}>
         <Header title={"All Rides"} />
         <View style={styles.skeletonContainer}>
-          {[...Array(6)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <RidesCardSkeleton key={i} />
           ))}
         </View>
@@ -144,18 +140,6 @@ const AllRides = () => {
     )
   }
 
-  // Empty state component
-  // const EmptyState = () => (
-  //   <View style={styles.emptyContainer}>
-  //     <Text style={styles.emptyText}>No rides available</Text>
-  //     <TouchableOpacity
-  //       style={styles.refreshButton}
-  //       onPress={handleRefresh}
-  //       disabled={refreshing}>
-  //       <Text style={styles.refreshButtonText}>Tap to Refresh</Text>
-  //     </TouchableOpacity>
-  //   </View>
-  // )
   const EmptyState = () => (
     <View style={styles.emptyCard}>
       <View style={styles.iconWrapper}>
@@ -191,7 +175,7 @@ const AllRides = () => {
 
       <FlatList
         data={data}
-        keyExtractor={(item, index) => `${item._id || index}-${index}`}
+        keyExtractor={(item, index) => index}
         renderItem={({ item }) => (
           <RidesCard
             data={[item]}

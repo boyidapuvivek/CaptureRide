@@ -9,6 +9,7 @@ import {
   Modal,
   Alert,
   ActivityIndicator,
+  Pressable,
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import axios from "axios"
@@ -35,13 +36,11 @@ const MyBikes = () => {
   const fetchBikes = async (token: string) => {
     try {
       const response = await axios.get(apiRoute.GETBIKE, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       setBikes(response.data.bikes)
     } catch (error) {
-      Alert.alert("No Bikes", "no bikes available")
+      Alert.alert("No Bikes", "No bikes available")
     } finally {
       setLoading(false)
     }
@@ -56,17 +55,9 @@ const MyBikes = () => {
     try {
       await axios.post(
         apiRoute.ADDBIKE,
-        {
-          bikeName: bikeName,
-          bikeNumber: bikeNumber,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { bikeName, bikeNumber },
+        { headers: { Authorization: `Bearer ${token}` } }
       )
-
       setBikeName("")
       setBikeNumber("")
       setModalVisible(false)
@@ -85,12 +76,8 @@ const MyBikes = () => {
         onPress: async () => {
           try {
             await axios.delete(apiRoute.DELETEBIKE, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-              params: {
-                id: bikeId,
-              },
+              headers: { Authorization: `Bearer ${token}` },
+              params: { id: bikeId },
             })
             fetchBikes(token)
             Alert.alert("Success", "Bike deleted")
@@ -103,13 +90,19 @@ const MyBikes = () => {
   }
 
   const renderBike = ({ item }) => (
-    <View style={styles.bikeCard}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.bikeCard,
+        pressed && { transform: [{ scale: 0.98 }] },
+      ]}>
       <View style={styles.bikeInfo}>
-        <Ionicons
-          name='bicycle'
-          size={24}
-          color={Colors.primary}
-        />
+        <View style={styles.bikeIcon}>
+          <Ionicons
+            name='bicycle'
+            size={22}
+            color='white'
+          />
+        </View>
         <View style={styles.bikeText}>
           <Text style={styles.bikeName}>{item.bikeName || item.name}</Text>
           <Text style={styles.bikeNumber}>
@@ -120,9 +113,7 @@ const MyBikes = () => {
       <TouchableOpacity
         style={styles.deleteBtn}
         onPress={() => {
-          if (token) {
-            deleteBike(item._id, token)
-          }
+          if (token) deleteBike(item._id, token)
         }}>
         <Ionicons
           name='trash'
@@ -130,7 +121,7 @@ const MyBikes = () => {
           color='#FF4444'
         />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   )
 
   if (loading) {
@@ -151,53 +142,61 @@ const MyBikes = () => {
     <View style={styles.container}>
       <Header title='My Bikes' />
 
-      <View style={styles.header}>
-        <Text style={styles.count}>{bikes.length} Bikes</Text>
+      {/* Top Stats Card */}
+      <View style={styles.statsCard}>
+        <View>
+          <Text style={styles.statsCount}>{bikes.length}</Text>
+          <Text style={styles.statsLabel}>Total Bikes</Text>
+        </View>
         <TouchableOpacity
-          style={styles.addBtn}
+          style={styles.quickAddBtn}
           onPress={() => setModalVisible(true)}>
           <Ionicons
             name='add'
-            size={20}
+            size={22}
             color='white'
           />
-          <Text style={styles.addText}>Add</Text>
+          <Text style={styles.quickAddText}>Add Bike</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Empty State or List */}
       {bikes.length === 0 ? (
-        <View style={styles.center}>
+        <View style={styles.emptyState}>
           <Ionicons
             name='bicycle-outline'
-            size={60}
-            color={Colors.lightGray}
+            size={100}
+            color={Colors.gray}
           />
-          <Text style={styles.emptyText}>No bikes available</Text>
+          <Text style={styles.emptyTitle}>No Bikes Yet</Text>
+          <Text style={styles.emptySubtitle}>
+            Start by adding your first bike to manage rides easily.
+          </Text>
           <TouchableOpacity
             style={styles.emptyBtn}
             onPress={() => setModalVisible(true)}>
-            <Text style={styles.emptyBtnText}>Add Your First Bike</Text>
+            <Text style={styles.emptyBtnText}>+ Add Bike</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <FlatList
           data={bikes}
           renderItem={renderBike}
-          keyExtractor={(item, index) =>
-            item.id?.toString() || index.toString()
-          }
-          style={styles.list}
+          keyExtractor={(item, index) => item._id || index.toString()}
+          contentContainerStyle={{ paddingBottom: 30 }}
+          showsVerticalScrollIndicator={false}
         />
       )}
 
+      {/* Modal as Bottom Sheet */}
       <Modal
         visible={modalVisible}
         transparent
         animationType='slide'>
         <View style={styles.modalOverlay}>
-          <View style={styles.modal}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add New Bike</Text>
+          <View style={styles.bottomSheet}>
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>Add New Bike</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Ionicons
                   name='close'
@@ -213,7 +212,6 @@ const MyBikes = () => {
               value={bikeName}
               onChangeText={setBikeName}
             />
-
             <TextInput
               style={styles.input}
               placeholder='Bike Number'
@@ -224,7 +222,7 @@ const MyBikes = () => {
             <TouchableOpacity
               style={styles.submitBtn}
               onPress={addBike}>
-              <Text style={styles.submitText}>Add Bike</Text>
+              <Text style={styles.submitText}>Save Bike</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -240,130 +238,125 @@ const styles = StyleSheet.create({
     paddingHorizontal: Values.paddingHorizontal,
     paddingTop: Values.paddingTop,
   },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  // Top stats card
+  statsCard: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 20,
-  },
-  count: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: Colors.darkGray,
-  },
-  addBtn: {
-    flexDirection: "row",
     backgroundColor: Colors.primary,
-    paddingHorizontal: 16,
+    borderRadius: 16,
+    padding: 20,
+    marginVertical: 16,
+  },
+  statsCount: { fontSize: 32, fontFamily: "poppins-bold", color: "white" },
+  statsLabel: { fontSize: 14, color: "white", marginTop: 4 },
+  quickAddBtn: {
+    flexDirection: "row",
+    backgroundColor: Colors.darkGray,
+    paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 12,
     alignItems: "center",
   },
-  addText: {
-    color: "white",
-    marginLeft: 4,
-    fontWeight: "500",
-  },
-  list: {
-    flex: 1,
-  },
+  quickAddText: { color: "white", marginLeft: 6, fontFamily: "poppins-medium" },
+
+  // Bike card
   bikeCard: {
     backgroundColor: "white",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
+    padding: 18,
+    marginBottom: 14,
+    borderRadius: 14,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: Colors.borderColor,
   },
-  bikeInfo: {
-    flexDirection: "row",
-    alignItems: "center",
+  bikeInfo: { flexDirection: "row", alignItems: "center" },
+  bikeIcon: {
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    padding: 10,
   },
-  bikeText: {
-    marginLeft: 12,
-  },
+  bikeText: { marginLeft: 12 },
   bikeName: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
     color: Colors.darkGray,
   },
-  bikeNumber: {
-    fontSize: 14,
-    color: Colors.gray,
-    marginTop: 2,
+  bikeNumber: { fontSize: 14, color: Colors.gray, marginTop: 2 },
+  deleteBtn: { padding: 8 },
+
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 100,
   },
-  deleteBtn: {
-    padding: 8,
-    backgroundColor: "#FFE5E5",
-    borderRadius: 8,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: Colors.gray,
+  emptyTitle: {
+    fontSize: 22,
+    fontFamily: "poppins-semibold",
     marginTop: 16,
-    marginBottom: 24,
+    color: Colors.darkGray,
+  },
+  emptySubtitle: {
+    fontSize: 18,
+    color: Colors.gray,
+    marginTop: 6,
+    textAlign: "center",
+    marginBottom: 20,
   },
   emptyBtn: {
     backgroundColor: Colors.primary,
-    paddingHorizontal: 24,
+    paddingHorizontal: 28,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: 10,
   },
   emptyBtnText: {
     color: "white",
-    fontWeight: "500",
+    fontFamily: "poppins-semibold",
+    fontSize: 15,
   },
+
+  // Modal Bottom Sheet
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
-  modal: {
+  bottomSheet: {
     backgroundColor: "white",
-    borderRadius: 16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 20,
   },
-  modalHeader: {
+  sheetHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 20,
   },
-  modalTitle: {
+  sheetTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "poppins-bold",
     color: Colors.darkGray,
   },
   input: {
     backgroundColor: "#F5F5F5",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    fontSize: 16,
+    padding: 14,
+    borderRadius: 10,
+    fontSize: 15,
+    marginBottom: 14,
   },
   submitBtn: {
     backgroundColor: Colors.primary,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: "center",
+    marginTop: 6,
   },
-  submitText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "500",
-  },
+  submitText: { color: "white", fontFamily: "poppins-semibold", fontSize: 16 },
 })
 
 export default MyBikes

@@ -18,17 +18,17 @@ import Colors from "../../constants/Colors"
 import { Values } from "../../constants/Values"
 import Header from "../../components/Header"
 import axios from "axios"
-import { getAccessToken } from "../../utils/authUtils"
 import Edit from "../../assets/icons/allRides/edit.svg"
 import Bike from "../../assets/icons/scooter.svg"
 import Info from "../../assets/icons/info.svg"
 import Dev from "../../assets/icons/dev.svg"
 import { apiRoute } from "../../api/apiConfig"
+import useFetchToken from "../../utils/useFetchToken"
 
 const Profile = () => {
   const { logout, user, updateUser } = useAuth() // Assuming you have updateUser in AuthContext
   const router = useRouter()
-  const accessToken = getAccessToken()
+  const token = useFetchToken()
   const [isUploading, setIsUploading] = useState(false)
 
   // Define quick actions (add icon, label, and handler)
@@ -42,7 +42,9 @@ const Profile = () => {
           width={24}
         />
       ),
-      onPress: () => router.push("/(screens)/editProfile"),
+      onPress: () => {
+        router.push("/(screens)/editProfile")
+      },
     },
     {
       id: "bikes",
@@ -86,7 +88,7 @@ const Profile = () => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${accessToken._j}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       )
@@ -94,17 +96,19 @@ const Profile = () => {
       if (res.status !== 200) {
         throw new Error("Failed user logout!!")
       }
-    } catch (error) {
-      throw new Error("Failed user logout!!")
-    } finally {
+
       await logout("user logged out")
       router.replace("/(auth)/login")
       AuthProvider().userUpdate(null)
+    } catch (error) {
+      throw new Error("Failed user logout!!")
+      Alert.alert("Error", error?.message)
     }
   }
 
   const pickImage = async () => {
     // Request permission to access media library
+
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync()
 
@@ -187,7 +191,7 @@ const Profile = () => {
 
       const response = await axios.patch(apiRoute.ADDPROFILE, formData, {
         headers: {
-          Authorization: `Bearer ${accessToken._j}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       })

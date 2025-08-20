@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 24,
-    fontWeight: "700",
+    fontFamily: "poppins-bold",
     color: Colors.primaryText,
   },
   description: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
     color: Colors.primary,
     marginBottom: 15,
   },
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   stepNumberText: {
     color: Colors.white,
-    fontWeight: "700",
+    fontFamily: "poppins-bold",
     fontSize: 14,
   },
   stepText: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   highlight: {
     color: Colors.primaryText,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
   },
 })
 

@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
   customerName: {
     fontSize: 20,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
     color: Colors.darkText,
     marginBottom: 8,
     textAlign: "center",
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   roomText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: "poppins-medium",
     color: Colors.white,
   },
 
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
     color: Colors.darkText,
   },
 
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   },
   contactValue: {
     fontSize: 15,
-    fontWeight: "500",
+    fontFamily: "poppins-medium",
     color: Colors.darkText,
   },
 
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 15,
-    fontWeight: "500",
+    fontFamily: "poppins-medium",
     color: Colors.darkText,
   },
 
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
   },
   documentTitle: {
     fontSize: 13,
-    fontWeight: "500",
+    fontFamily: "poppins-medium",
     color: Colors.darkText,
     textAlign: "center",
   },

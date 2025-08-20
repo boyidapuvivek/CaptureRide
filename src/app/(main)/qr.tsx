@@ -117,13 +117,11 @@ const Qr = () => {
   }
 
   const uploadImage = async (imageUri) => {
+    setIsLoading(true)
     if (!token) {
       Alert.alert("Error", "Authentication token not available")
       return
     }
-
-    setIsLoading(true)
-
     try {
       const formData = new FormData()
       formData.append("bankName", bankName)
@@ -140,8 +138,6 @@ const Qr = () => {
       })
 
       if (response.status === 201) {
-        Alert.alert("Success", "QR code uploaded successfully!")
-        // Refresh the QR images list
         await fetchQRImages()
       }
     } catch (error) {
@@ -176,9 +172,8 @@ const Qr = () => {
                 id: currentQr._id,
               },
             })
-            setIsLoading(false)
-            Alert.alert("Deleted", "QR code deleted successfully")
             await fetchQRImages()
+            setIsLoading(false)
           } catch (error) {
             setIsLoading(false)
             Alert.alert("Error", "Failed to delete QR code")
@@ -292,7 +287,29 @@ const Qr = () => {
     <View style={styles.container}>
       <Header title='QR Codes' />
       {isLoading ? (
-        <Loader />
+        <>
+          <Loader />
+          <View style={styles.mainContainer}>
+            {renderQRImages()}
+
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                title={"Add QR"}
+                width={140}
+                onPress={showImagePickerOptions}
+                disable={isLoadingImages}
+              />
+              <CustomButton
+                title='Delete Qr'
+                color={Colors.red}
+                fontColor={Colors.white}
+                width={140}
+                onPress={deleteQrImage}
+                disable={isLoadingImages}
+              />
+            </View>
+          </View>
+        </>
       ) : (
         <>
           <View style={styles.mainContainer}>
@@ -456,7 +473,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 14,
     color: Colors.grayText,
-    fontWeight: "500",
+    fontFamily: "poppins-medium",
   },
 
   modalContainer: {

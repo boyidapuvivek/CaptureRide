@@ -99,7 +99,7 @@ const RecentRides = () => {
 
           <TouchableOpacity
             style={styles.addRideButton}
-            onPress={handleViewAll}>
+            onPress={handleAdd}>
             <FontAwesome
               name='plus'
               size={22}
@@ -273,12 +273,13 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: Colors.transparent,
     borderRadius: 18,
-    justifyContent: "center",
+    justifyContent: "flex-stat",
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
     padding: 20,
     marginRight: 10,
+    minWidth: 260,
   },
   customerImage: {
     height: 100,

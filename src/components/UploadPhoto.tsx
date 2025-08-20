@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
   closeText: {
     color: '#007AFF',
     fontSize: 24,
-    fontWeight: 'bold',
+   fontFamily:"poppins-semibold",
     lineHeight: 24,
   },
   buttonContainer: {
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24,
-    fontWeight: 'bold',
+   fontFamily:"poppins-semibold",
     color: 'white',
   },
   overlay: {

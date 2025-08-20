@@ -109,17 +109,19 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 22,
-    fontWeight: "700",
+    fontFamily: "poppins-bold",
     color: Colors.darkText,
   },
   role: {
     fontSize: 16,
     color: Colors.grayText,
+    fontFamily: "poppins-regular",
     marginTop: 4,
   },
   description: {
     fontSize: 14,
     color: Colors.gray,
+    fontFamily: "poppins-regular",
     textAlign: "center",
     marginBottom: 20,
     lineHeight: 20,
@@ -129,13 +131,14 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
     color: Colors.primaryText,
     marginBottom: 8,
   },
   techItem: {
     fontSize: 14,
     color: Colors.gray,
+    fontFamily: "poppins-regular",
     lineHeight: 20,
   },
   socialContainer: {
@@ -154,7 +157,7 @@ const styles = StyleSheet.create({
   socialText: {
     color: Colors.white,
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "poppins-semibold",
     marginLeft: 8,
   },
 })
