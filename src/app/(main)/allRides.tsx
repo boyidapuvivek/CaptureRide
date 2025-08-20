@@ -81,7 +81,7 @@ const AllRides = () => {
 
       setHasMore(responseData?.pagination?.hasNext || false)
     } catch (error) {
-      console.error("❌ Fetch error:", error)
+      console.error("Fetch error:", error)
     } finally {
       setLoading(false)
       setInitialLoading(false)

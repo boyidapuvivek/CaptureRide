@@ -1,3 +1,4 @@
+// qr.tsx
 import React, { useEffect, useState, useRef, useCallback } from "react"
 import {
   StyleSheet,
@@ -7,12 +8,10 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  ActivityIndicator,
   Modal,
   TextInput,
   TouchableOpacity,
 } from "react-native"
-import * as ImagePicker from "expo-image-picker"
 import Header from "../../components/Header"
 import { Values } from "../../constants/Values"
 import QrImagePlaceholder from "../../assets/icons/qr_placeholder.svg"
@@ -20,127 +19,85 @@ import CustomButton from "../../components/CustomButton"
 import Colors from "../../constants/Colors"
 import axios from "axios"
 import { apiRoute } from "../../api/apiConfig"
-import { getAccessToken } from "../../utils/authUtils"
-import SkeletonBox from "../../utils/SkeletonBox"
 import useFetchToken from "../../utils/useFetchToken"
+import SkeletonBox from "../../utils/SkeletonBox"
 import Loader from "../../components/Loader"
+import {
+  pickImageFromCamera,
+  pickImageFromGallery,
+} from "../../utils/imagePickerUtils"
+import ImagePickerModal from "../../components/ImagePickerModal"
 
 const { width: screenWidth } = Dimensions.get("window")
 const IMAGE_WIDTH = screenWidth - Values.paddingHorizontal * 2
 const IMAGE_HEIGHT = 300
 
 const Qr = () => {
-  const [selectedImage, setSelectedImage] = useState(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [qrImages, setQrImages] = useState([])
+  const [qrImages, setQrImages] = useState<any[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoadingImages, setIsLoadingImages] = useState(true)
   const [modalVisible, setModalVisible] = useState(false)
   const [bankName, setBankName] = useState("")
+  const [pickerVisible, setPickerVisible] = useState(false)
 
-  const scrollViewRef = useRef(null)
-
+  const scrollViewRef = useRef<ScrollView | null>(null)
   const token = useFetchToken()
 
-  // Request permissions on component mount
   useEffect(() => {
-    const requestPermissions = async () => {
-      try {
-        const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync()
-        if (status !== "granted") {
-          Alert.alert(
-            "Permission Required",
-            "Camera roll access is needed to select QR images."
-          )
-        }
-      } catch (error) {
-        Alert.alert("Error requesting permissions", error?.message)
-      }
-    }
-
-    requestPermissions()
-  }, [])
-
-  // Fetch QR images when token is available
-  useEffect(() => {
-    if (token) {
-      fetchQRImages()
-    }
+    if (token) fetchQRImages()
   }, [token])
 
   const fetchQRImages = useCallback(async () => {
     if (!token) return
-
     setIsLoadingImages(true)
     try {
       const response = await axios.get(apiRoute.GETQR, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
-
       const qrData = response?.data?.qrs || []
       setQrImages(qrData)
-
-      if (qrData.length > 0) {
-        setCurrentIndex(0)
-      }
-    } catch (error) {
+      if (qrData.length > 0) setCurrentIndex(0)
+    } catch {
       Alert.alert("Error", "Failed to load QR images")
     } finally {
       setIsLoadingImages(false)
     }
   }, [token])
 
-  useEffect(() => {
-    if (qrImages.length === 0) {
-      setCurrentIndex(0)
-    } else if (currentIndex >= qrImages.length) {
-      setCurrentIndex(qrImages.length - 1) // ✅ Prevent out-of-bounds
-    }
-  }, [qrImages.length, currentIndex])
+  const handlePick = async (source: "camera" | "gallery") => {
+    let result =
+      source === "camera"
+        ? await pickImageFromCamera({
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+          })
+        : await pickImageFromGallery({
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.8,
+          })
 
-  // ✅ Clear selected image after upload
-  const pickImage = async () => {
-    try {
-      setModalVisible(false)
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-        allowsMultipleSelection: false,
-      })
-
-      if (!result.canceled && result.assets?.[0]) {
-        const imageUri = result.assets[0].uri
-        setSelectedImage(imageUri)
-
-        if (bankName.trim()) {
-          // ✅ Validate bank name
-          await uploadImage(imageUri)
-        } else {
-          Alert.alert("Error", "Please enter a bank name")
-          setSelectedImage(null)
-        }
+    if (result.success && result.uri) {
+      setSelectedImage(result.uri)
+      if (bankName.trim()) {
+        await uploadImage(result.uri)
+      } else {
+        Alert.alert("Error", "Please enter a bank name")
+        setSelectedImage(null)
       }
-    } catch (error) {
-      console.error("Image picker error:", error)
-      Alert.alert("Error", "Failed to pick image")
-      setSelectedImage(null) // ✅ Clear on error
     }
   }
 
-  const uploadImage = async (imageUri) => {
+  const uploadImage = async (imageUri: string) => {
     setIsLoading(true)
     if (!token) {
-      Alert.alert("Error", "Authentication token not available")
+      Alert.alert("Error", "Auth token missing")
       setIsLoading(false)
       return
     }
-
     try {
       const formData = new FormData()
       formData.append("bankName", bankName)
@@ -148,22 +105,19 @@ const Qr = () => {
         uri: imageUri,
         type: "image/jpeg",
         name: `qr_${Date.now()}.jpg`,
-      })
+      } as any)
 
       const response = await axios.post(apiRoute.ADDQR, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
-        timeout: 30000,
       })
-
       if (response.status === 201) {
         await fetchQRImages()
         setBankName("")
       }
-    } catch (error) {
-      console.error("Upload error:", error)
+    } catch {
       Alert.alert("Error", "Failed to upload QR code")
     } finally {
       setIsLoading(false)
@@ -173,14 +127,9 @@ const Qr = () => {
 
   const deleteQrImage = async () => {
     if (!token || qrImages.length === 0) return
-
     const currentQr = qrImages[currentIndex]
-
-    Alert.alert("Confirm Delete", "Are you sure you want to delete this QR?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
+    Alert.alert("Confirm Delete", "Delete this QR?", [
+      { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
@@ -188,45 +137,24 @@ const Qr = () => {
           try {
             setIsLoading(true)
             await axios.delete(apiRoute.DELETEQR, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-              params: {
-                id: currentQr._id,
-              },
+              headers: { Authorization: `Bearer ${token}` },
+              params: { id: currentQr._id },
             })
             await fetchQRImages()
+          } finally {
             setIsLoading(false)
-          } catch (error) {
-            setIsLoading(false)
-            Alert.alert("Error", "Failed to delete QR code")
           }
         },
       },
     ])
   }
 
-  const showImagePickerOptions = () => {
-    setModalVisible(true)
-  }
-
-  const handleScroll = (event) => {
-    const contentOffset = event.nativeEvent.contentOffset
-    const viewSize = event.nativeEvent.layoutMeasurement
-
-    // Calculate current page index
-    const pageIndex = Math.floor(contentOffset.x / viewSize.width)
+  const handleScroll = (event: any) => {
+    const pageIndex = Math.floor(
+      event.nativeEvent.contentOffset.x /
+        event.nativeEvent.layoutMeasurement.width
+    )
     setCurrentIndex(pageIndex)
-  }
-
-  const scrollToIndex = (index) => {
-    if (scrollViewRef.current && index >= 0 && index < qrImages.length) {
-      scrollViewRef.current.scrollTo({
-        x: index * IMAGE_WIDTH,
-        animated: true,
-      })
-      setCurrentIndex(index)
-    }
   }
 
   const renderQRImages = () => {
@@ -245,7 +173,6 @@ const Qr = () => {
         </View>
       )
     }
-
     if (qrImages.length === 0) {
       return (
         <View style={styles.placeholderContainer}>
@@ -257,7 +184,6 @@ const Qr = () => {
         </View>
       )
     }
-
     return (
       <View style={styles.imageSliderContainer}>
         <ScrollView
@@ -270,12 +196,11 @@ const Qr = () => {
           snapToInterval={IMAGE_WIDTH}
           snapToAlignment='center'
           contentContainerStyle={styles.scrollViewContent}>
-          {qrImages.map((qr, index) => (
+          {qrImages.map((qr) => (
             <View
               key={qr._id}
               style={styles.imageWrapper}>
               <Text style={styles.bankName}>{qr?.bankName}</Text>
-
               <Image
                 source={{ uri: qr?.qrPhoto }}
                 style={styles.qrImage}
@@ -284,12 +209,10 @@ const Qr = () => {
             </View>
           ))}
         </ScrollView>
-
-        {/* Pagination Dots */}
         <View style={styles.paginationContainer}>
           {qrImages.map((qr, index) => (
             <View
-              key={`dot-${qr._id}`} // ✅ Unique key
+              key={`dot-${qr._id}`}
               style={[
                 styles.paginationDot,
                 index === currentIndex && styles.paginationDotActive,
@@ -297,8 +220,6 @@ const Qr = () => {
             />
           ))}
         </View>
-
-        {/* Image Counter */}
         <Text style={styles.imageCounter}>
           {currentIndex + 1} / {qrImages.length}
         </Text>
@@ -308,36 +229,33 @@ const Qr = () => {
 
   return (
     <View style={styles.container}>
-      {/* Show loader overlay when loading */}
       {isLoading && <Loader />}
-
       <Header title='QR Codes' />
       <View style={styles.mainContainer}>
         {renderQRImages()}
-
         <View style={styles.buttonContainer}>
           <CustomButton
-            title={"Add QR"}
+            title='Add QR'
             width={140}
-            onPress={showImagePickerOptions}
-            disable={isLoadingImages || isLoading} // ✅ Disable during upload too
+            onPress={() => setModalVisible(true)}
+            disable={isLoadingImages || isLoading}
           />
           <CustomButton
-            title='Delete Qr'
+            title='Delete QR'
             color={Colors.red}
             fontColor={Colors.white}
             width={140}
             onPress={deleteQrImage}
-            disable={isLoadingImages || isLoading || qrImages.length === 0} // ✅ Better disable logic
+            disable={isLoadingImages || isLoading || qrImages.length === 0}
           />
         </View>
       </View>
 
+      {/* Bank Name Input Modal */}
       <Modal
         animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
+        transparent
+        visible={modalVisible}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.label}>Enter Bank Name</Text>
@@ -348,10 +266,13 @@ const Qr = () => {
               onChangeText={setBankName}
             />
             <TouchableOpacity
-              onPress={pickImage}
+              onPress={() => {
+                setModalVisible(false)
+                setPickerVisible(true)
+              }}
               style={styles.galleryButton}>
               <Text style={[styles.buttonText, { color: Colors.white }]}>
-                Gallery
+                Camera / Gallery
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -364,6 +285,14 @@ const Qr = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Modern Picker Modal */}
+      <ImagePickerModal
+        visible={pickerVisible}
+        onClose={() => setPickerVisible(false)}
+        onPickCamera={() => handlePick("camera")}
+        onPickGallery={() => handlePick("gallery")}
+      />
     </View>
   )
 }
@@ -387,13 +316,8 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingBottom: 20,
   },
-  imageSliderContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  scrollViewContent: {
-    alignItems: "center",
-  },
+  imageSliderContainer: { width: "100%", alignItems: "center" },
+  scrollViewContent: { alignItems: "center" },
   imageWrapper: {
     width: IMAGE_WIDTH,
     justifyContent: "center",
@@ -406,7 +330,6 @@ const styles = StyleSheet.create({
     height: IMAGE_HEIGHT - 20,
     borderRadius: 12,
   },
-  //Skleton styles
   skeletonContainer: {
     height: 400,
     width: "100%",
@@ -418,7 +341,6 @@ const styles = StyleSheet.create({
     height: IMAGE_HEIGHT - 20,
     borderRadius: 12,
   },
-
   placeholderContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -438,16 +360,6 @@ const styles = StyleSheet.create({
     fontFamily: "poppins-medium",
     textAlign: "center",
   },
-  loadingContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: IMAGE_HEIGHT,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#666",
-  },
   paginationContainer: {
     flexDirection: "row",
     justifyContent: "center",
@@ -462,7 +374,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ccc",
   },
   paginationDotActive: {
-    backgroundColor: Colors.primary || "#007AFF",
+    backgroundColor: Colors.primary,
     width: 10,
     height: 10,
     borderRadius: 5,
@@ -473,7 +385,6 @@ const styles = StyleSheet.create({
     color: Colors.grayText,
     fontFamily: "poppins-medium",
   },
-
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -487,11 +398,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
-  label: {
-    fontSize: 18,
-    marginBottom: 10,
-    fontFamily: "poppins-medium",
-  },
+  label: { fontSize: 18, marginBottom: 10, fontFamily: "poppins-medium" },
   input: {
     width: "100%",
     borderWidth: 1,
@@ -515,10 +422,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  buttonText: {
-    fontFamily: "poppins-medium",
-    fontSize: 14,
-  },
+  buttonText: { fontFamily: "poppins-medium", fontSize: 14 },
 })
 
 export default Qr

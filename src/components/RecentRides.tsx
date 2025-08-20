@@ -128,7 +128,9 @@ const RecentRides = () => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView horizontal>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}>
           {data?.map((ride, index) => (
             <Pressable
               key={index}
@@ -263,6 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.transparent,
     borderRadius: 18,
     alignItems: "center",
+    justifyContent: "center",
   },
   viewAllText: {
     fontSize: 16,

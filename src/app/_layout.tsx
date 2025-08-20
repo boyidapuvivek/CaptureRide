@@ -2,10 +2,11 @@
 import { Stack } from "expo-router"
 import { useFonts } from "expo-font"
 import { useEffect } from "react"
-import { View, ActivityIndicator, StatusBar } from "react-native"
+import { StatusBar } from "react-native"
 import { AuthProvider } from "../contexts/AuthContext"
 import * as SplashScreen from "expo-splash-screen"
 import Colors from "../constants/Colors"
+import { CameraHost } from "../utils/imagePickerUtils" // ✅ import global camera modal
 
 // Prevent the splash screen from auto-hiding before asset loading is complete
 SplashScreen.preventAutoHideAsync()
@@ -35,6 +36,7 @@ export default function RootLayout() {
         translucent
       />
       <Stack screenOptions={{ headerShown: false }} />
+      <CameraHost />
     </AuthProvider>
   )
 }

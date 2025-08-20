@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+// profile.tsx
+import React, { useState, useEffect } from "react"
 import {
   Text,
   View,
@@ -8,11 +9,8 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native"
-import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons"
-import * as ImagePicker from "expo-image-picker"
 import CustomButton from "../../components/CustomButton"
 import { AuthProvider, useAuth } from "../../contexts/AuthContext"
-import { handleError } from "../../utils/errorHandler"
 import { useRouter } from "expo-router"
 import Colors from "../../constants/Colors"
 import { Values } from "../../constants/Values"
@@ -24,14 +22,20 @@ import Info from "../../assets/icons/info.svg"
 import Dev from "../../assets/icons/dev.svg"
 import { apiRoute } from "../../api/apiConfig"
 import useFetchToken from "../../utils/useFetchToken"
+import {
+  pickImageFromCamera,
+  pickImageFromGallery,
+} from "../../utils/imagePickerUtils"
+import ImagePickerModal from "../../components/ImagePickerModal"
+import Camera from "../../assets/icons/camera.svg"
 
 const Profile = () => {
-  const { logout, user, updateUser } = useAuth() // Assuming you have updateUser in AuthContext
+  const { logout, user, updateUser } = useAuth()
   const router = useRouter()
   const token = useFetchToken()
   const [isUploading, setIsUploading] = useState(false)
+  const [pickerVisible, setPickerVisible] = useState(false)
 
-  // Define quick actions (add icon, label, and handler)
   const quickActions = [
     {
       id: "edit",
@@ -87,107 +91,53 @@ const Profile = () => {
         apiRoute.LOGOUT,
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       )
 
-      if (res.status !== 200) {
-        throw new Error("Failed user logout!!")
-      }
+      if (res.status !== 200) throw new Error("Failed user logout!!")
 
       await logout("user logged out")
       router.replace("/(auth)/login")
       AuthProvider().userUpdate(null)
     } catch (error) {
-      throw new Error("Failed user logout!!")
-      Alert.alert("Error", error?.message)
+      Alert.alert("Error", "Failed user logout!!")
     }
   }
 
-  const pickImage = async () => {
-    // Request permission to access media library
+  const handlePick = async (source: "camera" | "gallery") => {
+    if (isUploading) return
+    try {
+      let result =
+        source === "camera"
+          ? await pickImageFromCamera({
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 0.8,
+            })
+          : await pickImageFromGallery({
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 0.8,
+            })
 
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync()
-
-    if (permissionResult.granted === false) {
-      Alert.alert(
-        "Permission Required",
-        "Permission to access camera roll is required!"
-      )
-      return
-    }
-
-    // Show action sheet to choose between camera and gallery
-    Alert.alert(
-      "Select Image",
-      "Choose an option to update your profile picture",
-      [
-        {
-          text: "Camera",
-          onPress: () => openCamera(),
-        },
-        {
-          text: "Gallery",
-          onPress: () => openGallery(),
-        },
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-      ]
-    )
-  }
-
-  const openCamera = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync()
-
-    if (permissionResult.granted === false) {
-      Alert.alert(
-        "Permission Required",
-        "Permission to access camera is required!"
-      )
-      return
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    })
-
-    if (!result.canceled) {
-      uploadImage(result.assets[0])
+      if (result.success && result.uri) {
+        await uploadImage(result.uri)
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to select image. Please try again.")
     }
   }
 
-  const openGallery = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    })
-
-    if (!result.canceled) {
-      uploadImage(result.assets[0])
-    }
-  }
-
-  const uploadImage = async (imageAsset) => {
+  const uploadImage = async (imageUri: string) => {
     try {
       setIsUploading(true)
-
-      // Create FormData
       const formData = new FormData()
       formData.append("avatar", {
-        uri: imageAsset.uri,
+        uri: imageUri,
         type: "image/jpeg",
         name: "profile.jpg",
-      })
+      } as any)
 
       const response = await axios.patch(apiRoute.ADDPROFILE, formData, {
         headers: {
@@ -196,16 +146,12 @@ const Profile = () => {
         },
       })
 
-      if (response.status === 200) {
-        // Update user context with new profile image
-        if (updateUser) {
-          updateUser({ ...user, avatar: response.data.user.avatar })
-        }
+      if (response.status === 200 && updateUser) {
+        updateUser({ ...user, avatar: response.data.user.avatar })
         Alert.alert("Success", "Profile image updated successfully!")
       }
     } catch (error) {
-      console.error("Image upload error:", error)
-      Alert.alert("Error", "Failed to update profile image. Please try again.")
+      Alert.alert("Error", "Failed to update profile image.")
     } finally {
       setIsUploading(false)
     }
@@ -230,7 +176,7 @@ const Profile = () => {
             />
             <TouchableOpacity
               style={styles.editImageButton}
-              onPress={pickImage}
+              onPress={() => setPickerVisible(true)}
               disabled={isUploading}
               activeOpacity={0.7}>
               {isUploading ? (
@@ -239,10 +185,9 @@ const Profile = () => {
                   color={Colors.primary}
                 />
               ) : (
-                <MaterialIcons
-                  name='camera-alt'
-                  size={16}
-                  color={Colors.primary}
+                <Camera
+                  height={16}
+                  width={16}
                 />
               )}
             </TouchableOpacity>
@@ -253,7 +198,6 @@ const Profile = () => {
 
         <View style={styles.quickActionsContainer}>
           <Text style={styles.quickActionsTitle}>Actions</Text>
-
           <View style={styles.actionsRow}>
             {quickActions.map((action) => (
               <TouchableOpacity
@@ -276,6 +220,14 @@ const Profile = () => {
           color={Colors.red}
         />
       </View>
+
+      {/* Modern Picker Modal */}
+      <ImagePickerModal
+        visible={pickerVisible}
+        onClose={() => setPickerVisible(false)}
+        onPickCamera={() => handlePick("camera")}
+        onPickGallery={() => handlePick("gallery")}
+      />
     </View>
   )
 }
@@ -287,22 +239,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Values.paddingHorizontal,
     paddingTop: Values.paddingTop,
   },
-  mainContainer: {
-    flex: 1,
-  },
-  profileSection: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  profileImageContainer: {
-    position: "relative",
-    marginBottom: 16,
-  },
-  profileImage: {
-    height: 120,
-    width: 120,
-    borderRadius: 60,
-  },
+  mainContainer: { flex: 1 },
+  profileSection: { alignItems: "center", marginTop: 20 },
+  profileImageContainer: { position: "relative", marginBottom: 16 },
+  profileImage: { height: 120, width: 120, borderRadius: 60 },
   editImageButton: {
     position: "absolute",
     bottom: 0,
@@ -313,10 +253,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.primary,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
@@ -332,9 +268,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.grayText,
   },
-  quickActionsContainer: {
-    marginTop: 40,
-  },
+  quickActionsContainer: { marginTop: 30 },
   quickActionsTitle: {
     fontFamily: "poppins-medium",
     fontSize: 18,
@@ -348,22 +282,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 10,
   },
-
   actionButton: {
     width: "48%",
     alignItems: "center",
-    backgroundColor: Colors.transparent,
-    paddingVertical: 24,
+    paddingVertical: 20,
     paddingHorizontal: 16,
     borderRadius: 18,
     marginBottom: 16,
+    backgroundColor: Colors.transparent,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-
   iconContainer: {
     justifyContent: "center",
     alignItems: "center",
@@ -375,9 +306,7 @@ const styles = StyleSheet.create({
     color: Colors.darkText,
     textAlign: "center",
   },
-  logoutContainer: {
-    marginBottom: 50,
-  },
+  logoutContainer: { marginBottom: 50 },
 })
 
 export default Profile
