@@ -93,26 +93,43 @@ const Qr = () => {
     }
   }, [token])
 
+  useEffect(() => {
+    if (qrImages.length === 0) {
+      setCurrentIndex(0)
+    } else if (currentIndex >= qrImages.length) {
+      setCurrentIndex(qrImages.length - 1) // ✅ Prevent out-of-bounds
+    }
+  }, [qrImages.length, currentIndex])
+
+  // ✅ Clear selected image after upload
   const pickImage = async () => {
     try {
-      setModalVisible(false) // close modal
+      setModalVisible(false)
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
+        allowsMultipleSelection: false,
       })
 
       if (!result.canceled && result.assets?.[0]) {
         const imageUri = result.assets[0].uri
-
         setSelectedImage(imageUri)
 
-        await uploadImage(imageUri, bankName) // pass bankName if needed
+        if (bankName.trim()) {
+          // ✅ Validate bank name
+          await uploadImage(imageUri)
+        } else {
+          Alert.alert("Error", "Please enter a bank name")
+          setSelectedImage(null)
+        }
       }
     } catch (error) {
+      console.error("Image picker error:", error)
       Alert.alert("Error", "Failed to pick image")
+      setSelectedImage(null) // ✅ Clear on error
     }
   }
 
@@ -120,27 +137,33 @@ const Qr = () => {
     setIsLoading(true)
     if (!token) {
       Alert.alert("Error", "Authentication token not available")
+      setIsLoading(false)
       return
     }
+
     try {
       const formData = new FormData()
       formData.append("bankName", bankName)
       formData.append("qrPhoto", {
         uri: imageUri,
         type: "image/jpeg",
-        name: "qr.jpg",
+        name: `qr_${Date.now()}.jpg`,
       })
+
       const response = await axios.post(apiRoute.ADDQR, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
+        timeout: 30000,
       })
 
       if (response.status === 201) {
         await fetchQRImages()
+        setBankName("")
       }
     } catch (error) {
+      console.error("Upload error:", error)
       Alert.alert("Error", "Failed to upload QR code")
     } finally {
       setIsLoading(false)
@@ -249,7 +272,7 @@ const Qr = () => {
           contentContainerStyle={styles.scrollViewContent}>
           {qrImages.map((qr, index) => (
             <View
-              key={index}
+              key={qr._id}
               style={styles.imageWrapper}>
               <Text style={styles.bankName}>{qr?.bankName}</Text>
 
@@ -264,9 +287,9 @@ const Qr = () => {
 
         {/* Pagination Dots */}
         <View style={styles.paginationContainer}>
-          {qrImages.map((_, index) => (
+          {qrImages.map((qr, index) => (
             <View
-              key={index}
+              key={`dot-${qr._id}`} // ✅ Unique key
               style={[
                 styles.paginationDot,
                 index === currentIndex && styles.paginationDotActive,
@@ -285,55 +308,30 @@ const Qr = () => {
 
   return (
     <View style={styles.container}>
+      {/* Show loader overlay when loading */}
+      {isLoading && <Loader />}
+
       <Header title='QR Codes' />
-      {isLoading ? (
-        <>
-          <Loader />
-          <View style={styles.mainContainer}>
-            {renderQRImages()}
+      <View style={styles.mainContainer}>
+        {renderQRImages()}
 
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                title={"Add QR"}
-                width={140}
-                onPress={showImagePickerOptions}
-                disable={isLoadingImages}
-              />
-              <CustomButton
-                title='Delete Qr'
-                color={Colors.red}
-                fontColor={Colors.white}
-                width={140}
-                onPress={deleteQrImage}
-                disable={isLoadingImages}
-              />
-            </View>
-          </View>
-        </>
-      ) : (
-        <>
-          <View style={styles.mainContainer}>
-            {renderQRImages()}
-
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                title={"Add QR"}
-                width={140}
-                onPress={showImagePickerOptions}
-                disable={isLoadingImages}
-              />
-              <CustomButton
-                title='Delete Qr'
-                color={Colors.red}
-                fontColor={Colors.white}
-                width={140}
-                onPress={deleteQrImage}
-                disable={isLoadingImages}
-              />
-            </View>
-          </View>
-        </>
-      )}
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            title={"Add QR"}
+            width={140}
+            onPress={showImagePickerOptions}
+            disable={isLoadingImages || isLoading} // ✅ Disable during upload too
+          />
+          <CustomButton
+            title='Delete Qr'
+            color={Colors.red}
+            fontColor={Colors.white}
+            width={140}
+            onPress={deleteQrImage}
+            disable={isLoadingImages || isLoading || qrImages.length === 0} // ✅ Better disable logic
+          />
+        </View>
+      </View>
 
       <Modal
         animationType='slide'

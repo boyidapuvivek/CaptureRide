@@ -31,13 +31,6 @@ const AllRides = () => {
   const router = useRouter()
   const token = useFetchToken()
 
-  useEffect(() => {
-    console.log("Data length:", data.length)
-    if (data.length > 1000) {
-      console.warn("Data array getting very large:", data.length)
-    }
-  }, [data])
-
   const fetchData = async (
     pageNum: number,
     isRefresh = false,
@@ -45,8 +38,10 @@ const AllRides = () => {
   ) => {
     if (!token) return
 
+    // Prevent multiple simultaneous requests
     if (loading || loadingMore) return
 
+    // Set appropriate loading states
     if (isRefresh) {
       setRefreshing(true)
     } else if (isLoadMore) {
@@ -67,23 +62,26 @@ const AllRides = () => {
       })
 
       const responseData = res?.data
-
       const rides = Array.isArray(responseData?.rides)
         ? responseData?.rides
         : []
 
+      // ✅ FIXED: Clear priority order for data handling
       if (isRefresh) {
-        setData(rides)
-        setPage(2)
-      } else if (isLoadMore || pageNum > 1) {
-        setData((prev) => [...prev, ...rides])
+        setData(rides) // ✅ Always reset on refresh
+        setPage(rides.length > 0 ? 2 : 1) // Set next page correctly
+      } else if (isLoadMore && pageNum > 1) {
+        setData((prev) => [...prev, ...rides]) // ✅ Only append on load more
+        setPage(pageNum + 1) // ✅ Set next page correctly
       } else {
+        // Initial load (page 1, not refresh, not load more)
         setData(rides)
-        setPage(2)
+        setPage(rides.length > 0 ? 2 : 1)
       }
 
       setHasMore(responseData?.pagination?.hasNext || false)
     } catch (error) {
+      console.error("❌ Fetch error:", error)
     } finally {
       setLoading(false)
       setInitialLoading(false)
@@ -96,9 +94,9 @@ const AllRides = () => {
   useFocusEffect(
     useCallback(() => {
       if (token) {
-        // Reset pagination and refresh data
-        setPage(1)
-        fetchData(1, true)
+        setPage(1) // Reset page first
+        setHasMore(true) // Reset hasMore to allow fetching
+        fetchData(1, true) // Force refresh
       }
     }, [token])
   )
@@ -106,17 +104,17 @@ const AllRides = () => {
   const loadMore = useCallback(() => {
     if (!loading && !loadingMore && hasMore && data.length > 0) {
       fetchData(page, false, true)
-      setPage((prev) => prev + 1)
+      // Don't increment page here - let fetchData handle it
     }
   }, [loading, loadingMore, hasMore, page, data.length])
 
   const handleRefresh = useCallback(() => {
     if (!refreshing && !loading) {
       setPage(1)
+      setHasMore(true) // Reset hasMore
       fetchData(1, true)
     }
   }, [refreshing, loading])
-
   const handleAddRides = () => {
     router.push("/(main)/addRide")
   }
