@@ -1,6 +1,6 @@
 // UploadPhoto.tsx
 import Colors from "../constants/Colors"
-import React, { useRef, useState } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import {
   StyleSheet,
   View,
@@ -25,10 +25,17 @@ import ImagePickerModal from "./ImagePickerModal"
 type Props = {
   title?: string
   captureImage?: (uri: string) => void
+  resetKey?: number // Add resetKey prop to force reset
+  initialPhoto?: string // Add prop to set initial photo value
 }
 
-const UploadPhoto = ({ title, captureImage }: Props) => {
-  const [photo, setPhoto] = useState("")
+const UploadPhoto = ({
+  title,
+  captureImage,
+  resetKey,
+  initialPhoto = "",
+}: Props) => {
+  const [photo, setPhoto] = useState(initialPhoto)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [permission, requestPermissions] = useCameraPermissions()
   const [facing, setFacing] = useState<CameraType>("back")
@@ -36,6 +43,18 @@ const UploadPhoto = ({ title, captureImage }: Props) => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [pickerVisible, setPickerVisible] = useState(false)
   const cameraRef = useRef<CameraView | null>(null)
+
+  // Reset component when resetKey changes
+  useEffect(() => {
+    if (resetKey !== undefined) {
+      setPhoto(initialPhoto)
+      setIsModalVisible(false)
+      setPickerVisible(false)
+      setIsProcessing(false)
+      setFacing("back")
+      setFlash("off")
+    }
+  }, [resetKey, initialPhoto])
 
   const toggleCameraFacing = () =>
     setFacing((current) => (current === "back" ? "front" : "back"))

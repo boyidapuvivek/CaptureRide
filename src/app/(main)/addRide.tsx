@@ -28,6 +28,7 @@ const AddRide = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [bikes, setBikes] = useState([])
   const [bikeOptions, setBikeOptions] = useState([])
+  const [resetKey, setResetKey] = useState(0) // Add reset key for forcing component re-render
   const token = useFetchToken()
 
   useFocusEffect(
@@ -68,6 +69,8 @@ const AddRide = () => {
     setAadharPhoto("")
     setDLPhoto("")
     setCustomerPhoto("")
+    // Increment reset key to force all components to re-render and reset
+    setResetKey((prev) => prev + 1)
   }
 
   const handlePress = async () => {
@@ -116,7 +119,8 @@ const AddRide = () => {
       })
 
       if (res.status === 202) {
-        formatData()
+        Alert.alert("Success", "Ride added successfully!")
+        formatData() // This will now properly reset all components
       } else {
         Alert.alert("Upload Failed", "Please try again.")
       }
@@ -168,6 +172,7 @@ const AddRide = () => {
             </TextInputField>
 
             <CustomDropdown
+              key={`dropdown-${resetKey}`} // Force complete re-render
               placeholder='Select Vehicle'
               data={bikeOptions}
               onSelect={(item) => setVehicle(item.value)}
@@ -177,14 +182,17 @@ const AddRide = () => {
             />
 
             <UploadPhoto
+              key={`customer-photo-${resetKey}`} // Force complete re-render
               title='Upload Photo'
               captureImage={setCustomerPhoto}
             />
             <UploadPhoto
+              key={`aadhar-photo-${resetKey}`} // Force complete re-render
               title='Upload Aadhaar'
               captureImage={setAadharPhoto}
             />
             <UploadPhoto
+              key={`dl-photo-${resetKey}`} // Force complete re-render
               title='Upload DL'
               captureImage={setDLPhoto}
             />

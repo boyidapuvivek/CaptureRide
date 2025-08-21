@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   View,
   Text,
@@ -25,6 +25,8 @@ interface CustomDropdownProps {
   style?: ViewStyle
   disabled?: boolean
   message?: String
+  selectedValue?: DropdownItem | null // Add prop to control selection externally
+  resetKey?: number // Add resetKey prop to force reset
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -34,9 +36,19 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   style,
   disabled = false,
   message,
+  selectedValue = null,
+  resetKey,
 }) => {
   const [isVisible, setIsVisible] = useState(false)
-  const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(
+    selectedValue
+  )
+
+  // Reset selection when resetKey changes or selectedValue changes
+  useEffect(() => {
+    setSelectedItem(selectedValue)
+    setIsVisible(false) // Close dropdown on reset
+  }, [selectedValue, resetKey])
 
   const toggleDropdown = () => {
     if (!disabled) {
