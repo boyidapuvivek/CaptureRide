@@ -47,7 +47,7 @@
 ## 📥 Download
 
 <p align="center">
-  <a href="[https://your-apk-link.com](https://expo.dev/accounts/captureride132/projects/CaptureRide/builds/1a9719b3-a035-4478-990c-d09fdcf8d1ad)">
+  <a href="https://expo.dev/accounts/captureride132/projects/CaptureRide/builds/1a9719b3-a035-4478-990c-d09fdcf8d1ad">
     <img src="https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android" alt="Download APK"/>
   </a>
 </p>
