@@ -59,8 +59,8 @@
 
 1. Clone the repository  
    ```bash
-   git clone https://github.com/bpyidapuvivek/CaptureRide.git
-   cd capture-ride
+   https://github.com/boyidapuvivek/CaptureRide.git
+   cd CaptureRide
 2. Install dependencies
    ```bash
    npm install
