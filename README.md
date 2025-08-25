@@ -1,55 +1,73 @@
-<<<<<<< HEAD
-# CaptureRide
-An React Native App that capture the images of the customers (aadhar,driving license) that enhances the productivity of the bike renting vendors saving their time. 
-=======
-# Welcome to your Expo app 👋
+<h1 align="center">Capture Ride</h1>  
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">
+  <img src="./src/assets/icon.png" alt="App Logo" width="150"/>
+</p>
 
-## Get started
+<p align="center">
+  A mobile application designed for <b>bike rental vendors</b> to easily manage and document customer details, including capturing images of their Aadhaar cards and driving licenses.  
+</p>
 
-1. Install dependencies
+---
 
+## ✨ Features
+- 📷 Capture and store Aadhaar & Driving License images  
+- 👤 Maintain customer records with ease  
+- 🔒 Secure data handling  
+- ⚡ Fast and user-friendly interface  
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** React Native (Expo)  
+- **Backend:** Node.js, Express  
+- **Database:** MongoDB  
+- **Other Tools:** REST API, Cloudinary  
+
+---
+
+## 📸 Screenshots
+<p align="center">
+  <table align="center">
+    <tr>
+      <td align="center"><img src="./app-screen-images/HOME.png" alt="Home Screen" width="200"/><br/>🏠 Home</td>
+      <td align="center"><img src="./app-screen-images/ADDRIDE.png" alt="Add Ride" width="200"/><br/>➕ Add Ride</td>
+      <td align="center"><img src="./app-screen-images/ALLRIDES.png" alt="All Rides" width="200"/><br/>📋 All Rides</td>
+    </tr>
+    <tr>
+      <td align="center"><img src="./app-screen-images/QR.png" alt="QR Screen" width="200"/><br/>🔗 QR</td>
+      <td align="center"><img src="./app-screen-images/PROFILE.png" alt="Profile Screen" width="200"/><br/>👤 Profile</td>
+      <td align="center"><img src="./app-screen-images/RIDEDATA.png" alt="Ride Data Screen" width="200"/><br/>📊 Ride Data</td>
+    </tr>
+  </table>
+</p>
+
+---
+
+## 📥 Download
+
+<p align="center">
+  <a href="https://your-apk-link.com">
+    <img src="https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android" alt="Download APK"/>
+  </a>
+</p>
+
+
+---
+
+## 📦 Installation & Setup  
+
+1. Clone the repository  
+   ```bash
+   git clone https://github.com/bpyidapuvivek/CaptureRide.git
+   cd capture-ride
+2. Install dependencies
    ```bash
    npm install
-   ```
-
-2. Start the app
-
+   or
+   yarn install
+3. Run the app
    ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
->>>>>>> 1dcec3f529e60d93c913251cb99ffc2e0f9d078e
+   npx expo run:android
+   or
+   npx expo start(expo go)
