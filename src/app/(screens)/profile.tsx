@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from "react-native"
 import CustomButton from "../../components/CustomButton"
 import { AuthProvider, useAuth } from "../../contexts/AuthContext"
@@ -28,6 +29,7 @@ import {
 } from "../../utils/imagePickerUtils"
 import ImagePickerModal from "../../components/ImagePickerModal"
 import Camera from "../../assets/icons/camera.svg"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const Profile = () => {
   const { logout, user, updateUser } = useAuth()
@@ -35,6 +37,7 @@ const Profile = () => {
   const token = useFetchToken()
   const [isUploading, setIsUploading] = useState(false)
   const [pickerVisible, setPickerVisible] = useState(false)
+  const inset = useSafeAreaInsets()
 
   const quickActions = [
     {
@@ -161,57 +164,60 @@ const Profile = () => {
         title={"Profile"}
         showProfile={false}
       />
-      <View style={styles.mainContainer}>
-        <View style={styles.profileSection}>
-          <View style={styles.profileImageContainer}>
-            <Image
-              source={
-                user?.avatar
-                  ? { uri: user.avatar }
-                  : require("../../assets/images/profile.png")
-              }
-              style={styles.profileImage}
-            />
-            <TouchableOpacity
-              style={styles.editImageButton}
-              onPress={() => setPickerVisible(true)}
-              disabled={isUploading}
-              activeOpacity={0.7}>
-              {isUploading ? (
-                <ActivityIndicator
-                  size='small'
-                  color={Colors.primary}
-                />
-              ) : (
-                <Camera
-                  height={16}
-                  width={16}
-                />
-              )}
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.userName}>{user?.username || "Vivek"}</Text>
-          <Text style={styles.email}>{user?.email}</Text>
-        </View>
 
-        <View style={styles.quickActionsContainer}>
-          <Text style={styles.quickActionsTitle}>Actions</Text>
-          <View style={styles.actionsRow}>
-            {quickActions.map((action) => (
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={[styles.mainContainer, { paddingBottom: inset.bottom }]}>
+          <View style={styles.profileSection}>
+            <View style={styles.profileImageContainer}>
+              <Image
+                source={
+                  user?.avatar
+                    ? { uri: user.avatar }
+                    : require("../../assets/images/profile.png")
+                }
+                style={styles.profileImage}
+              />
               <TouchableOpacity
-                key={action.id}
-                style={styles.actionButton}
-                onPress={action.onPress}
+                style={styles.editImageButton}
+                onPress={() => setPickerVisible(true)}
+                disabled={isUploading}
                 activeOpacity={0.7}>
-                <View style={styles.iconContainer}>{action.icon}</View>
-                <Text style={styles.actionText}>{action.label}</Text>
+                {isUploading ? (
+                  <ActivityIndicator
+                    size='small'
+                    color={Colors.primary}
+                  />
+                ) : (
+                  <Camera
+                    height={16}
+                    width={16}
+                  />
+                )}
               </TouchableOpacity>
-            ))}
+            </View>
+            <Text style={styles.userName}>{user?.username || "Vivek"}</Text>
+            <Text style={styles.email}>{user?.email}</Text>
+          </View>
+
+          <View style={styles.quickActionsContainer}>
+            <Text style={styles.quickActionsTitle}>Actions</Text>
+            <View style={styles.actionsRow}>
+              {quickActions.map((action) => (
+                <TouchableOpacity
+                  key={action.id}
+                  style={styles.actionButton}
+                  onPress={action.onPress}
+                  activeOpacity={0.7}>
+                  <View style={styles.iconContainer}>{action.icon}</View>
+                  <Text style={styles.actionText}>{action.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
-      <View style={styles.logoutContainer}>
+      <View style={{ marginBottom: inset.bottom + 10 }}>
         <CustomButton
           title={"Logout"}
           onPress={handlePress}
@@ -239,7 +245,9 @@ const styles = StyleSheet.create({
   },
   mainContainer: { flex: 1 },
   profileSection: { alignItems: "center", marginTop: 20 },
-  profileImageContainer: { position: "relative", marginBottom: 16 },
+  profileImageContainer: {
+    position: "relative",
+  },
   profileImage: { height: 120, width: 120, borderRadius: 60 },
   editImageButton: {
     position: "absolute",
@@ -304,7 +312,7 @@ const styles = StyleSheet.create({
     color: Colors.darkText,
     textAlign: "center",
   },
-  logoutContainer: { marginBottom: 50 },
+  logoutContainer: { marginBottom: 40 },
 })
 
 export default Profile

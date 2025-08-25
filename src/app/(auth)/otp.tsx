@@ -17,6 +17,7 @@ import { useRouter, useLocalSearchParams } from "expo-router"
 import { otpApi } from "../../api/apiService"
 import { otpSchema } from "../../utils/validationSchemas"
 import { z } from "zod"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const OTPVerification = () => {
   const router = useRouter()
@@ -34,6 +35,7 @@ const OTPVerification = () => {
   // Timer state
   const [timer, setTimer] = useState(600) // 10 minutes
   const [canResend, setCanResend] = useState(false)
+  const inset = useSafeAreaInsets()
 
   // Timer effect
   useEffect(() => {
@@ -162,7 +164,7 @@ const OTPVerification = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { paddingBottom: inset.bottom }]}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ flexGrow: 1 }}>
       <Pressable

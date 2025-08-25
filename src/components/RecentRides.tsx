@@ -22,7 +22,7 @@ import useFetchToken from "../utils/useFetchToken"
 import Number from "../assets/icons/roomNum.svg"
 import Phone from "../assets/icons/phone.svg"
 import SkeletonBox from "../utils/SkeletonBox"
-import { FontAwesome, Ionicons } from "@expo/vector-icons"
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons"
 
 const RecentRides = () => {
   const [data, setData] = useState<[]>([])
@@ -51,7 +51,9 @@ const RecentRides = () => {
         },
       })
       setData(res?.data?.rides)
-      setLoading(false)
+      setTimeout(() => {
+        setLoading(false)
+      }, 2000)
     } catch (error) {
       Alert.alert("Unable to fetch Rides", "Retry after sometime")
       setLoading(false)
@@ -76,7 +78,7 @@ const RecentRides = () => {
     }, [token])
   )
   //Empty State
-  if (!loading && (!data || data.length === 0)) {
+  if (!data || data.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -100,8 +102,8 @@ const RecentRides = () => {
           <TouchableOpacity
             style={styles.addRideButton}
             onPress={handleAdd}>
-            <FontAwesome
-              name='plus'
+            <MaterialIcons
+              name='add'
               size={22}
               color={Colors.white}
             />
@@ -335,7 +337,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 6,
     paddingHorizontal: 30,
     paddingVertical: 12,
     elevation: 4,

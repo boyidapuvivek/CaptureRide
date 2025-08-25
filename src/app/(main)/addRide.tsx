@@ -16,6 +16,18 @@ import { getAccessToken } from "../../utils/authUtils"
 import { apiRoute } from "../../api/apiConfig"
 import useFetchToken from "../../utils/useFetchToken"
 import { useFocusEffect } from "expo-router"
+import { addRideSchema } from "../../utils/validationSchemas"
+import { z } from "zod"
+
+type ValidationErrors = {
+  customerName?: string
+  phoneNumber?: string
+  roomNumber?: string
+  vehicleNumber?: string
+  aadharPhoto?: string
+  dlPhoto?: string
+  customerPhoto?: string
+}
 
 const AddRide = () => {
   const [roomNumber, setRoomNumber] = useState("")
@@ -28,7 +40,8 @@ const AddRide = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [bikes, setBikes] = useState([])
   const [bikeOptions, setBikeOptions] = useState([])
-  const [resetKey, setResetKey] = useState(0) // Add reset key for forcing component re-render
+  const [resetKey, setResetKey] = useState(0)
+  const [errors, setErrors] = useState<ValidationErrors>({})
   const token = useFetchToken()
 
   useFocusEffect(
@@ -69,21 +82,43 @@ const AddRide = () => {
     setAadharPhoto("")
     setDLPhoto("")
     setCustomerPhoto("")
+    setErrors({})
     // Increment reset key to force all components to re-render and reset
     setResetKey((prev) => prev + 1)
   }
 
+  const validateForm = () => {
+    try {
+      addRideSchema.parse({
+        customerName,
+        phoneNumber,
+        roomNumber,
+        vehicleNumber,
+        aadharPhoto,
+        dlPhoto,
+        customerPhoto,
+      })
+      setErrors({})
+      return true
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const validationErrors: ValidationErrors = {}
+        error.errors.forEach((err) => {
+          const field = err.path[0] as keyof ValidationErrors
+          validationErrors[field] = err.message
+        })
+        setErrors(validationErrors)
+      }
+      return false
+    }
+  }
+
   const handlePress = async () => {
-    if (
-      !roomNumber ||
-      !customerName ||
-      !phoneNumber ||
-      !vehicleNumber ||
-      !aadharPhoto ||
-      !dlPhoto ||
-      !customerPhoto
-    ) {
-      Alert.alert("All Fields Required", "Please fill all the fields")
+    if (!validateForm()) {
+      Alert.alert(
+        "Enter All Valid Data",
+        "Please fix all the errors and add all the above data."
+      )
       return
     }
 
@@ -131,6 +166,28 @@ const AddRide = () => {
     }
   }
 
+  // Clear individual field errors when user starts typing
+  const handleCustomerNameChange = (text: string) => {
+    setCustomerName(text)
+    if (errors.customerName) {
+      setErrors((prev) => ({ ...prev, customerName: undefined }))
+    }
+  }
+
+  const handlePhoneNumberChange = (text: string) => {
+    setPhoneNumber(text)
+    if (errors.phoneNumber) {
+      setErrors((prev) => ({ ...prev, phoneNumber: undefined }))
+    }
+  }
+
+  const handleRoomNumberChange = (text: string) => {
+    setRoomNumber(text)
+    if (errors.roomNumber) {
+      setErrors((prev) => ({ ...prev, roomNumber: undefined }))
+    }
+  }
+
   return (
     <>
       {isLoading && <Loader />}
@@ -144,7 +201,8 @@ const AddRide = () => {
             <TextInputField
               placeholder='Customer Name'
               value={customerName}
-              onChangeText={setCustomerName}>
+              onChangeText={handleCustomerNameChange}
+              error={errors.customerName}>
               <User
                 height={20}
                 width={20}
@@ -154,7 +212,8 @@ const AddRide = () => {
             <TextInputField
               placeholder='Mobile Number'
               value={phoneNumber}
-              onChangeText={setPhoneNumber}>
+              onChangeText={handlePhoneNumberChange}
+              error={errors.phoneNumber}>
               <Phone
                 height={25}
                 width={25}
@@ -164,7 +223,8 @@ const AddRide = () => {
             <TextInputField
               placeholder='Hotel Name and Room Number'
               value={roomNumber}
-              onChangeText={setRoomNumber}>
+              onChangeText={handleRoomNumberChange}
+              error={errors.roomNumber}>
               <RoomNumber
                 height={25}
                 width={25}
@@ -175,7 +235,12 @@ const AddRide = () => {
               key={`dropdown-${resetKey}`} // Force complete re-render
               placeholder='Select Vehicle'
               data={bikeOptions}
-              onSelect={(item) => setVehicle(item.value)}
+              onSelect={(item) => {
+                setVehicle(item.value)
+                if (errors.vehicleNumber) {
+                  setErrors((prev) => ({ ...prev, vehicleNumber: undefined }))
+                }
+              }}
               message={
                 "No Bikes Added \n First Click on Add Bike on Home Screen"
               }
@@ -184,17 +249,32 @@ const AddRide = () => {
             <UploadPhoto
               key={`customer-photo-${resetKey}`} // Force complete re-render
               title='Upload Photo'
-              captureImage={setCustomerPhoto}
+              captureImage={(uri) => {
+                setCustomerPhoto(uri)
+                if (errors.customerPhoto) {
+                  setErrors((prev) => ({ ...prev, customerPhoto: undefined }))
+                }
+              }}
             />
             <UploadPhoto
               key={`aadhar-photo-${resetKey}`} // Force complete re-render
               title='Upload Aadhaar'
-              captureImage={setAadharPhoto}
+              captureImage={(uri) => {
+                setAadharPhoto(uri)
+                if (errors.aadharPhoto) {
+                  setErrors((prev) => ({ ...prev, aadharPhoto: undefined }))
+                }
+              }}
             />
             <UploadPhoto
               key={`dl-photo-${resetKey}`} // Force complete re-render
               title='Upload DL'
-              captureImage={setDLPhoto}
+              captureImage={(uri) => {
+                setDLPhoto(uri)
+                if (errors.dlPhoto) {
+                  setErrors((prev) => ({ ...prev, dlPhoto: undefined }))
+                }
+              }}
             />
 
             <CustomButton

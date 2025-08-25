@@ -3,80 +3,87 @@ import { View, Text, StyleSheet, Image, ScrollView } from "react-native"
 import Colors from "../../constants/Colors"
 import Header from "../../components/Header"
 import { Values } from "../../constants/Values"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const AboutApp = () => {
+  const inset = useSafeAreaInsets()
+
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}>
+    <View style={styles.container}>
       <Header
         title={"About App"}
         showProfile={false}
       />
-      {/* Logo */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require("../../assets/icon.png")} // replace with your app logo
-          style={styles.logo}
-        />
-        <Text style={styles.appName}>Capture Ride</Text>
-      </View>
-
-      {/* App Description */}
-      <Text style={styles.description}>
-        Capture Ride is a full-stack mobile application designed for bike rental
-        agencies. It helps vendors manage customer details, verify documents,
-        and track rides seamlessly. The app integrates React Native on the
-        frontend with a Node.js, Express.js, and MongoDB backend for smooth and
-        secure data flow.
-      </Text>
-
-      {/* How to Use */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>How to Use the App</Text>
-
-        <View style={styles.step}>
-          <View style={styles.stepNumber}>
-            <Text style={styles.stepNumberText}>1</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Logo */}
+        <View style={{ paddingBottom: inset.bottom + 20 }}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../assets/icon.png")}
+              style={styles.logo}
+            />
+            <Text style={styles.appName}>Capture Ride</Text>
           </View>
-          <Text style={styles.stepText}>
-            Add your <Text style={styles.highlight}>bikes data</Text> to the
-            system for rentals.
-          </Text>
-        </View>
 
-        <View style={styles.step}>
-          <View style={styles.stepNumber}>
-            <Text style={styles.stepNumberText}>2</Text>
-          </View>
-          <Text style={styles.stepText}>
-            Create <Text style={styles.highlight}>ride entries</Text> for each
-            customer.
+          {/* App Description */}
+          <Text style={styles.description}>
+            Capture Ride is a full-stack mobile application designed for bike
+            rental agencies. It helps vendors manage customer details, verify
+            documents, and track rides seamlessly. The app integrates React
+            Native on the frontend with a Node.js, Express.js, and MongoDB
+            backend for smooth and secure data flow.
           </Text>
-        </View>
 
-        <View style={styles.step}>
-          <View style={styles.stepNumber}>
-            <Text style={styles.stepNumberText}>3</Text>
-          </View>
-          <Text style={styles.stepText}>
-            Capture and upload{" "}
-            <Text style={styles.highlight}>QR code and document images</Text>{" "}
-            (Aadhar, Driving License, etc).
-          </Text>
-        </View>
+          {/* How to Use */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>How to Use the App</Text>
 
-        <View style={styles.step}>
-          <View style={styles.stepNumber}>
-            <Text style={styles.stepNumberText}>4</Text>
+            <View style={styles.step}>
+              <View style={styles.stepNumber}>
+                <Text style={styles.stepNumberText}>1</Text>
+              </View>
+              <Text style={styles.stepText}>
+                Add your <Text style={styles.highlight}>bikes data</Text> to the
+                system for rentals.
+              </Text>
+            </View>
+
+            <View style={styles.step}>
+              <View style={styles.stepNumber}>
+                <Text style={styles.stepNumberText}>2</Text>
+              </View>
+              <Text style={styles.stepText}>
+                Create <Text style={styles.highlight}>ride entries</Text> for
+                each customer.
+              </Text>
+            </View>
+
+            <View style={styles.step}>
+              <View style={styles.stepNumber}>
+                <Text style={styles.stepNumberText}>3</Text>
+              </View>
+              <Text style={styles.stepText}>
+                Capture and upload{" "}
+                <Text style={styles.highlight}>
+                  QR code and document images
+                </Text>{" "}
+                (Aadhar, Driving License, etc).
+              </Text>
+            </View>
+
+            <View style={styles.step}>
+              <View style={styles.stepNumber}>
+                <Text style={styles.stepNumberText}>4</Text>
+              </View>
+              <Text style={styles.stepText}>
+                Update your <Text style={styles.highlight}>profile</Text> and
+                manage all rides with ease.
+              </Text>
+            </View>
           </View>
-          <Text style={styles.stepText}>
-            Update your <Text style={styles.highlight}>profile</Text> and manage
-            all rides with ease.
-          </Text>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -84,11 +91,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  scrollContent: {
     paddingTop: Values.paddingTop,
     paddingHorizontal: Values.paddingHorizontal,
   },
+
   logoContainer: {
     alignItems: "center",
     marginBottom: 20,
@@ -99,7 +105,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginBottom: 10,
     borderRadius: 80,
-    marginTop: 30,
   },
   appName: {
     fontSize: 24,

@@ -27,6 +27,7 @@ import {
   pickImageFromGallery,
 } from "../../utils/imagePickerUtils"
 import ImagePickerModal from "../../components/ImagePickerModal"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const { width: screenWidth } = Dimensions.get("window")
 const IMAGE_WIDTH = screenWidth - Values.paddingHorizontal * 2
@@ -44,6 +45,7 @@ const Qr = () => {
 
   const scrollViewRef = useRef<ScrollView | null>(null)
   const token = useFetchToken()
+  const inset = useSafeAreaInsets()
 
   useEffect(() => {
     if (token) fetchQRImages()
@@ -157,6 +159,20 @@ const Qr = () => {
     setCurrentIndex(pageIndex)
   }
 
+  const handleBankNameValidation = () => {
+    try {
+      if (bankName.length === 0) {
+        throw new Error()
+      }
+      if (bankName.length !== 0) {
+        setModalVisible(false)
+        setPickerVisible(true)
+      }
+    } catch (error) {
+      Alert.alert("Enter Bank Name", "Bank name is mandatory")
+    }
+  }
+
   const renderQRImages = () => {
     if (isLoadingImages) {
       return (
@@ -231,25 +247,28 @@ const Qr = () => {
     <View style={styles.container}>
       {isLoading && <Loader />}
       <Header title='QR Codes' />
-      <View style={styles.mainContainer}>
-        {renderQRImages()}
-        <View style={styles.buttonContainer}>
-          <CustomButton
-            title='Add QR'
-            width={140}
-            onPress={() => setModalVisible(true)}
-            disable={isLoadingImages || isLoading}
-          />
-          <CustomButton
-            title='Delete QR'
-            color={Colors.red}
-            fontColor={Colors.white}
-            width={140}
-            onPress={deleteQrImage}
-            disable={isLoadingImages || isLoading || qrImages.length === 0}
-          />
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={[styles.mainContainer, { paddingBottom: inset.bottom }]}>
+          {renderQRImages()}
+          <View style={styles.buttonContainer}>
+            <CustomButton
+              title='Add QR'
+              width={140}
+              onPress={() => setModalVisible(true)}
+              disable={isLoadingImages || isLoading}
+            />
+            <CustomButton
+              title='Delete QR'
+              color={Colors.red}
+              fontColor={Colors.white}
+              width={140}
+              onPress={deleteQrImage}
+              disable={isLoadingImages || isLoading || qrImages.length === 0}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       {/* Bank Name Input Modal */}
       <Modal
@@ -267,12 +286,11 @@ const Qr = () => {
             />
             <TouchableOpacity
               onPress={() => {
-                setModalVisible(false)
-                setPickerVisible(true)
+                handleBankNameValidation()
               }}
               style={styles.galleryButton}>
               <Text style={[styles.buttonText, { color: Colors.white }]}>
-                Camera / Gallery
+                Add Image
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -314,7 +332,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
-    paddingBottom: 20,
   },
   imageSliderContainer: { width: "100%", alignItems: "center" },
   scrollViewContent: { alignItems: "center" },

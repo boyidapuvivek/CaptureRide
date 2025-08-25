@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   // Modal Styles
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.9)",
+    backgroundColor: Colors.grayStatus,
   },
   modalBackground: {
     flex: 1,

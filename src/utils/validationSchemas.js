@@ -125,3 +125,45 @@ export const resetPasswordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   })
+
+export const addRideSchema = z.object({
+  customerName: z
+    .string()
+    .min(1, { message: "Customer name is required" })
+    .min(2, { message: "Customer name must be at least 2 characters" })
+    .max(50, { message: "Customer name must be less than 50 characters" })
+    .regex(/^[a-zA-Z\s]+$/, {
+      message: "Customer name can only contain letters and spaces",
+    }),
+
+  phoneNumber: z
+    .string()
+    .min(1, { message: "Phone number is required" })
+    .regex(/^[6-9]\d{9}$/, {
+      message: "Please enter a valid 10-digit Indian mobile number",
+    }),
+
+  roomNumber: z
+    .string()
+    .min(1, { message: "Hotel name and room number is required" })
+    .min(3, {
+      message: "Hotel name and room number must be at least 3 characters",
+    })
+    .max(100, {
+      message: "Hotel name and room number must be less than 100 characters",
+    })
+    .regex(/^[a-zA-Z0-9\s,.-]+$/, {
+      message:
+        "Hotel name and room number can only contain letters, numbers, spaces, and basic punctuation",
+    }),
+
+  vehicleNumber: z
+    .string()
+    .min(1, { message: "Vehicle selection is required" }),
+
+  customerPhoto: z.string().min(1, { message: "Customer photo is required" }),
+
+  aadharPhoto: z.string().min(1, { message: "Aadhaar photo is required" }),
+
+  dlPhoto: z.string().min(1, { message: "Driving license photo is required" }),
+})

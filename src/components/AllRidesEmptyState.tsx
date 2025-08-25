@@ -1,34 +1,56 @@
 import React from "react"
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
+import { Ionicons, MaterialIcons } from "@expo/vector-icons"
 import Colors from "../constants/Colors"
+import { useRouter } from "expo-router"
 
-const AllRidesEmptyState = ({ clearSearch }) => (
-  <View style={styles.emptyCard}>
-    <View style={styles.iconWrapper}>
-      <Ionicons
-        name='bicycle-outline'
-        size={60}
-        color={Colors.primary}
-      />
+const AllRidesEmptyState = ({ clearSearch }) => {
+  const router = useRouter()
+  const handleAddRide = () => {
+    router.push("/(main)/addRide")
+  }
+
+  return (
+    <View style={styles.emptyCard}>
+      <View style={styles.iconWrapper}>
+        <Ionicons
+          name='bicycle-outline'
+          size={60}
+          color={Colors.primary}
+        />
+      </View>
+      <Text style={styles.emptyTitle}>No Rides Found</Text>
+      <Text style={styles.emptySubtitle}>
+        You haven't added any rides yet. Add Rides to display data.
+      </Text>
+      <View style={{ gap: 10 }}>
+        <TouchableOpacity
+          style={styles.refreshButton}
+          onPress={clearSearch}
+          activeOpacity={0.8}>
+          <Ionicons
+            name='refresh'
+            size={18}
+            color={Colors.white}
+          />
+          <Text style={styles.refreshButtonText}>Clear Search</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.refreshButton}
+          onPress={handleAddRide}
+          activeOpacity={0.8}>
+          <MaterialIcons
+            name='add'
+            size={20}
+            color={Colors.white}
+          />
+          <Text style={styles.refreshButtonText}>Add Ride</Text>
+        </TouchableOpacity>
+      </View>
     </View>
-    <Text style={styles.emptyTitle}>No Rides Found</Text>
-    <Text style={styles.emptySubtitle}>
-      You haven't added any rides yet. Add Rides to display data.
-    </Text>
-    <TouchableOpacity
-      style={styles.refreshButton}
-      onPress={clearSearch}
-      activeOpacity={0.8}>
-      <Ionicons
-        name='refresh'
-        size={18}
-        color={Colors.white}
-      />
-      <Text style={styles.refreshButtonText}>Clear Search</Text>
-    </TouchableOpacity>
-  </View>
-)
+  )
+}
 
 const styles = StyleSheet.create({
   emptyCard: {
@@ -64,6 +86,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   refreshButton: {
+    minWidth: 200,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

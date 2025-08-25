@@ -12,76 +12,83 @@ import Colors from "../../constants/Colors"
 import { FontAwesome } from "@expo/vector-icons"
 import Header from "../../components/Header"
 import { Values } from "../../constants/Values"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const AboutDeveloper = () => {
   const handleLinkPress = (url) => {
     Linking.openURL(url)
   }
 
+  const inset = useSafeAreaInsets()
+
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.scrollContent}>
-      {/* Profile Section */}
+    <View style={styles.container}>
       <Header
         title={"About Developer"}
         showProfile={false}
       />
-      <View style={styles.profileContainer}>
-        <Image
-          source={require("../../assets/images/developer.png")} // Replace with your pic
-          style={styles.profileImage}
-        />
-        <Text style={styles.name}>Venkat Vivek Boyidapu</Text>
-        <Text style={styles.role}>Full Stack Web & Mobile Developer</Text>
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Profile Section */}
+        <View style={{ paddingBottom: inset.bottom + 20 }}>
+          <View style={styles.profileContainer}>
+            <Image
+              source={require("../../assets/images/developer.png")} // Replace with your pic
+              style={styles.profileImage}
+            />
+            <Text style={styles.name}>Venkat Vivek Boyidapu</Text>
+            <Text style={styles.role}>Full Stack Web & Mobile Developer</Text>
+          </View>
 
-      {/* Description */}
-      <Text style={styles.description}>
-        I am a passionate developer with experience in building scalable web and
-        mobile applications. Skilled in React Native, Next.js, Node.js, and
-        MongoDB. I enjoy creating modern, user-friendly interfaces and robust
-        backend solutions.
-      </Text>
+          {/* Description */}
+          <Text style={styles.description}>
+            I am a passionate developer with experience in building scalable web
+            and mobile applications. Skilled in React Native, Next.js, Node.js,
+            and MongoDB. I enjoy creating modern, user-friendly interfaces and
+            robust backend solutions.
+          </Text>
 
-      {/* Tech Stack */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Technologies and Tools</Text>
-        <Text style={styles.techItem}>
-          C/C++, JavaScript, TypeScript, Python{"\n"}
-          React.js, Next.js, React Native{"\n"}
-          Node.js, Express.js, MongoDB{"\n"}
-          Docker, Postman, Figma, TablePlus
-        </Text>
-      </View>
+          {/* Tech Stack */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Technologies and Tools</Text>
+            <Text style={styles.techItem}>
+              C/C++, JavaScript, TypeScript, Python{"\n"}
+              React.js, Next.js, React Native{"\n"}
+              Node.js, Express.js, MongoDB{"\n"}
+              Docker, Postman, Figma, TablePlus
+            </Text>
+          </View>
 
-      {/* Social Links */}
-      <View style={styles.socialContainer}>
-        <TouchableOpacity
-          style={styles.socialButton}
-          onPress={() => handleLinkPress("https://github.com/boyidapuvivek")}>
-          <FontAwesome
-            name='github'
-            size={20}
-            color={Colors.white}
-          />
-          <Text style={styles.socialText}>GitHub</Text>
-        </TouchableOpacity>
+          {/* Social Links */}
+          <View style={styles.socialContainer}>
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={() =>
+                handleLinkPress("https://github.com/boyidapuvivek")
+              }>
+              <FontAwesome
+                name='github'
+                size={20}
+                color={Colors.white}
+              />
+              <Text style={styles.socialText}>GitHub</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.socialButton, { backgroundColor: Colors.primary }]}
-          onPress={() =>
-            handleLinkPress("https://linkedin.com/in/boyidapuvivek")
-          }>
-          <FontAwesome
-            name='linkedin'
-            size={20}
-            color={Colors.white}
-          />
-          <Text style={styles.socialText}>LinkedIn</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+            <TouchableOpacity
+              style={[styles.socialButton, { backgroundColor: Colors.primary }]}
+              onPress={() =>
+                handleLinkPress("https://linkedin.com/in/boyidapuvivek")
+              }>
+              <FontAwesome
+                name='linkedin'
+                size={20}
+                color={Colors.white}
+              />
+              <Text style={styles.socialText}>LinkedIn</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -89,11 +96,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
-  },
-  scrollContent: {
     paddingHorizontal: Values.paddingHorizontal,
     paddingTop: Values.paddingTop,
   },
+
   profileContainer: {
     alignItems: "center",
     marginBottom: 20,
@@ -105,7 +111,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: Colors.primary,
     marginBottom: 12,
-    marginTop: 40,
+    marginTop: 20,
   },
   name: {
     fontSize: 22,
