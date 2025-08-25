@@ -36,7 +36,7 @@
     </tr>
     <tr>
       <td align="center"><img src="./app-screen-images/QR.png" alt="QR Screen" width="200"/><br/>🔗 QR</td>
-      <td align="center"><img src="./app-screen-images/PROFILE.png" alt="Profile Screen" width="200"/><br/>👤 Profile</td>
+      <td align="center"><img src="./app-screen-images/PROFILE.png" alt="Profile Screen" width="200"/><br/>👨‍💻 Profile</td>
       <td align="center"><img src="./app-screen-images/RIDEDATA.png" alt="Ride Data Screen" width="200"/><br/>📊 Ride Data</td>
     </tr>
   </table>
@@ -47,7 +47,7 @@
 ## 📥 Download
 
 <p align="center">
-  <a href="https://your-apk-link.com">
+  <a href="[https://your-apk-link.com](https://expo.dev/accounts/captureride132/projects/CaptureRide/builds/1a9719b3-a035-4478-990c-d09fdcf8d1ad)">
     <img src="https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android" alt="Download APK"/>
   </a>
 </p>
