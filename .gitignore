@@ -1,6 +1,5 @@
 node_modules/
 firebaseConfig.jsx
-.expo/
 dist/
 npm-debug.*
 *.jks
@@ -52,8 +51,11 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
 
 # @end expo-cli
+
+.expo/
